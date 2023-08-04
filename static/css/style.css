@@ -1,0 +1,39 @@
+
+.borderg{
+    border-color: #00a1a1
+    ;
+}
+.colorg{
+    background-color: #00a1a1;
+}
+.textg{
+    color: #00a1a1;
+}
+.pointer{
+    cursor: pointer;
+}
+::placeholder{
+    color: gray;
+}
+
+.smallicon{
+    max-height: 2rem;
+}
+.verysmallicon{
+    max-height: 1.5rem;
+}
+/* product detail.html */
+.form-check-input[type="radio"] {
+    border-radius: 50%;
+    width: 20px; /* Adjust the width to your preference */
+    height: 20px; /* Adjust the height to your preference */
+  }
+
+.accordion_icon_none{
+    --bs-accordion-btn-icon:none;
+    --bs-accordion-btn-active-icon:none
+}
+.tablescroll{
+    max-height: 200px;
+    overflow: scroll;
+}

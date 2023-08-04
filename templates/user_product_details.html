@@ -1,0 +1,75 @@
+{% extends 'user_index.html' %}
+{% block user_index %}
+
+    <div class="w-100 pt-5"></div>
+
+    <div class="container-fluid px-4 px-sm-4 px-lg-5">
+        <div class="row justify-content-center">
+
+
+            <div class="col-6 borde row bg-dange">
+                
+                <div class="col-2">
+                    <div class="pb-2"><img src="{{ product.image1.url }}" onclick="change('1','main')" id="1" class="img-fluid border" alt="product"></div>
+                    <div class="pb-2"><img src="{{ product.image2.url }}" onclick="change('2','main')" id="2" class="img-fluid border" alt=""></div>
+                    <div class="pb-2"><img src="{{ product.image3.url }}" onclick="change('3','main')" id="3" class="img-fluid border" alt=""></div>
+                    <div class="pb-2"><img src="{{ product.image4.url }}" onclick="change('4','main')" id="4" class="img-fluid border" alt=""></div>
+                </div>
+                <div class="col-10 d-flex justify-content-center ">
+                    <div class="bg-succes">
+                        <img src="{{ product.image1.url }}" class="img-fluid border" alt="product" id='main'>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-5 borde bg-inf">
+
+                {% comment %} <div class="text-secondary fw-semibold h6 mt-2 ">⭐️ 4.5 ❘ (12)    Ratings</div> {% endcomment %}
+                <h3 class="fw-bold mt-0">{{ product.model_name }}</h3>
+                
+                <h6 class="py-1">{{ product.description }}</h6>
+
+                <span class="fw-medium h4 fw-bold">{{ product.selling_price }}₹</span>
+                <span class="fw-bold text-decoration-line-through text-secondary h4 px-2">{{ product.actual_price }}₹</span>
+                <span class="text-success h6 fw-bolder">{{ product.discount }}% off</span>
+
+                <!-- <h6 class="pt-2 fw-bold">Choose color : RED</h6>
+                <div class="d-flex gap-1">
+                    <div class="form-check form-check-inline m-0">
+                        <input class="form-check-input bg-danger p-2 border-0" type="radio" name="color" id="color1" value="red" checked>
+                    </div>
+                    <div class="form-check form-check-inline m-0">
+                        <input class="form-check-input bg-success border-0 p-2" type="radio" name="color" id="color2" value="blue">
+                    </div>
+                    <div class="form-check form-check-inline m-0">
+                        <input class="form-check-input bg-info border-0 p-2" type="radio" name="color" id="color3" value="green">
+                    </div>
+                </div> -->
+
+                <h6 class="pt-3 fw-bold">Check Delivery</h6>
+                <div class="col-10">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter Pincode" aria-label="Recipient's username" aria-describedby="button-addon2">
+                        <button class="btn btn-success colorg" type="button" id="button-addon2">CHECK</button>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 col-10 py-3">
+                    <button class="btn btn-success border-0 colorg py-2 col" type="button"><i class="bi bi-cart3"></i> ADD TO CART</button>
+                    <button class="btn btn-success border-0 colorg py-2 col" type="button"><i class="bi bi-lightning"></i> BUY NOW</button>
+                </div>
+                
+                <!-- <hr> -->
+                
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+                       
+{% endblock user_index %}
+

@@ -1,0 +1,94 @@
+{% extends 'user_index.html' %}
+{% block user_index %}
+{% load static %}
+<div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    {% for banner in banners %}
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.counter == 1 %}active{% endif %}"></button>
+    {% endfor %}
+  </div>
+  <div class="carousel-inner">
+    {% for banner in banners %}
+    <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}" data-bs-interval="4000">
+      <img src="{{ banner.image.url }}" class="d-block w-100" alt="banner">
+    </div>
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<div class="container">
+  <h3 class="pt-5">Shop by Categories</h3>
+
+  <div class="d-flex pt-3 gap-4">
+    {% for sub in subs %}
+    <div class="card p-0 pt-3 border-0" style="width: 7rem;">
+      <img src="{{ sub.image.url }}" class="card-img-top" alt="category">
+      <div class="card-body m-0 p-0 pt-1">
+        <h6 class="card-title text-center m-0 p-0">{{ sub.sub_category_name }}</h6>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h3 class="pt-5">Top Brands</h3>
+
+  <div class="d-flex pt-3 gap-4">
+    {% for brand in brands %}
+    <div class="card p-0 pt-3 border-0" style="width: 7rem;">
+      <img src="{{ brand.logo.url }}" class="card-img-top" alt="category">
+      <div class="card-body m-0 p-0 pt-1">
+        <h6 class="card-title text-center m-0 p-0">{{ brand.brand_name }}</h6>
+      </div>
+    </div>
+    {% endfor %}
+   
+  </div>
+
+  <h3 class="py-5">New Arrivals</h3>
+
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-2 g-lg-3">
+
+    {% for product in products %}
+    <div class="col">
+        <div class="p-3 card rounded-3 border border-1 border-secondary-subtle shadow">
+            <a href="{% url 'details' pk=product.id %}">
+              <img src="{{ product.image1.url }}" class="card-img-top bg-secondary-subtle border rounded-3 p-2" alt="product" />
+            </a>
+            {% comment %} <div class="card-img-overlay">
+                <img src="images/heart.svg" class="smallicon m-2 float-end d-block" id="h1" onclick="wish('h1','h2')" alt="heart"> 
+                <img src="images/heartfill.svg" class="smallicon m-2 float-end d-none" id="h2" onclick="wish('h2','h1')" alt="heart">
+            </div> {% endcomment %}
+            <div class="card-body p-0">
+                <div class="pt-2">
+                    {% comment %} <img src="images/star.svg" class="verysmallicon mb-2" alt="star">
+                    <span class="card-text text-secondary fw-semibold">4.5 (12)</span> {% endcomment %}
+                </div>
+                <h4 class="card-title fw-bold mt-0 pt-0">{{ product.brand }}</h4>
+                <h5 class="card-subtitle mb-2 fw-bold">{{ product.model_name }}</h5>
+                <span class="card-text fw-medium h5">{{ product.selling_price }}₹ </span>
+                <span class="card-text fw-bold text-decoration-line-through text-secondary h6">{{ product.actual_price }}₹</span>
+                <span class="card-text small text-success fw-bold">{{ product.discount }}% off</span>
+                {% comment %} <div class="d-flex mt-2">
+                    <span class="p-2 bg-danger rounded-circle me-1"></span>
+                    <span class="p-2 bg-success rounded-circle me-1"></span>
+                </div> {% endcomment %}
+                <h6 class="card-text text-secondary fw-bold mt-2">Free Delivery</h6>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+
+
+{% endblock user_index %}
