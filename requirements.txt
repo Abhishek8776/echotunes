@@ -2,3 +2,4 @@ django
 psycopg2
 django-jazzmin
 pillow
+python-dotenv
