@@ -5,12 +5,12 @@ import uuid
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-  id = models.TextField(primary_key=True,default=uuid.uuid4,editable=False)
+  id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
   email = models.EmailField(unique=True)
   name=models.CharField(max_length=200 , null=True)
   is_active = models.BooleanField('access',default=True)
   is_staff = models.BooleanField(default=False)
-  date_joined = models.DateTimeField(auto_now_add=True)  # Add this line
+  date_joined = models.DateTimeField(auto_now_add=True) 
 
 
   objects = CustomUserManager()

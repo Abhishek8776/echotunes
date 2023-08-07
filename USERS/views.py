@@ -6,27 +6,33 @@ from django.core.cache import cache
 from . models import *
 from UI_ELEMENTS.models import *
 from PRODUCTS.models import *
+from django.views import View
 
 
 # Create your views here.
+class signup_user(View):
 
-def signup_user(request):
+  def get(self, request):
+    return render(request , 'user_signup.html')
 
-  if request.method == 'POST':
+  def post(self, request):
     name = request.POST.get('name')
     email = request.POST.get('email')
     password = request.POST.get('pass')
     userobj = User.objects.filter(email=email)
     if userobj.exists():
       messages.warning(request , 'You are already registerd, Please sign in')
-      return redirect(signup_user)
-    send_otp_email(email, name, password)
-    return redirect(verify_otp)
-  return render(request , 'user_signup.html')
+      return redirect('signup')
+    send_otp_email(email, name, password) 
+    return redirect('otp')
 
 
-def verify_otp(request):
-  if request.method == 'POST':
+class verify_otp(View):
+
+  def get(self, request):
+    return render(request , 'user_verify_otp.html')
+
+  def post(self, request):
     reciveotp = request.POST.get('otp1') + request.POST.get('otp2') + request.POST.get('otp3') + request.POST.get('otp4') + request.POST.get('otp5') + request.POST.get('otp6')
     try:
       name = cache.get('signup_data')['name']
@@ -42,12 +48,13 @@ def verify_otp(request):
       return redirect(verify_otp)
     User.objects.create_user(name = name , email = email , password=password)
     cache.delete('signup_data')
-    return redirect(signin)
-  return render(request , 'user_verify_otp.html')
 
-def signin(request):
+class signin(View):
 
-  if request.method == 'POST':
+  def get(self, request):
+    return render(request , 'user_signin.html')
+  
+  def post(self, request):
     email = request.POST.get('email')
     password = request.POST.get('pass')
     print(email,password)
@@ -58,8 +65,6 @@ def signin(request):
       request.session['usr_id'] = user.id
       return redirect(home)
     messages.warning(request , 'Email password mismatch')
-    return redirect(verify_otp)
-  return render( request , 'user_signin.html')
 
 # def forgot(request):
 #   if request.method == 'POST':
@@ -74,25 +79,31 @@ def signin(request):
 #   return render( request , 'forgot.html')
 
 
-def signout(request):
-  logout(request)
-  return redirect(signin)
+class signout(View):
+
+  def post(self, request):
+    logout(request)
+    return redirect(signin)
 
 
 
-def home(request):
-  banners = Banner.objects.all()
-  products=Product.objects.all()
-  brands = Brand.objects.all()
-  subs = Sub_Category.objects.all()
-  for product in products:
-    discount = round((((product.actual_price - product.selling_price) / product.actual_price) * 100))
-    product.discount = discount
-  return render(request, 'user_home.html',{'banners':banners,'products':products ,'brands':brands ,'subs':subs,'discount':discount})
+class home(View):
+
+  def get(self, request):
+    banners = Banner.objects.all()
+    products=Product.objects.all()
+    brands = Brand.objects.all()
+    subs = Sub_Category.objects.all()
+    for product in products:
+      discount = round((((product.actual_price - product.selling_price) / product.actual_price) * 100))
+      product.discount = discount
+    return render(request, 'user_home.html',{'banners':banners,'products':products ,'brands':brands ,'subs':subs,'discount':discount})
 
 
 
-def product_details(request, pk):
+class product_details(View):
+  
+  def get(self, request, pk):
     product = get_object_or_404(Product, id=pk)
     product.discount = round((((product.actual_price - product.selling_price) / product.actual_price) * 100))
     return render(request, 'user_product_details.html', {'product':product})
