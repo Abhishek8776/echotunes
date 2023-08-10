@@ -42,15 +42,13 @@
                     <a class="nav-link" aria-current="page" href="#">Cart</a>
                     {% comment %} <span class="badge text-bg-danger">1</span> {% endcomment %}
                 </div>
+                <div class="my-3 my-sm-4">
                 {% if user.is_authenticated %}
-                <div class="my-3 my-sm-4">
-                    <a class="btn btn-success w-100 colorg border-0" href="{% url 'signin' %}" role="button">Sign In</a>
-                </div>
+                    <a class="btn btn-success w-100 colorg border-0" href="{% url 'signout' %}" role="button">Sign Out</a>
                 {% else %}
-                <div class="my-3 my-sm-4">
-                    <a class="btn btn-success w-100 colorg border-0" href="{% url 'home' %}" role="button">Sign Out</a>
-                </div>
+                    <a class="btn btn-success w-100 colorg border-0" href="{% url 'signin' %}" role="button">Sign In</a>
                 {% endif %}
+                </div>
             </div>
         </div>
     </div>

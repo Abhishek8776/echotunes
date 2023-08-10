@@ -22,12 +22,8 @@
             <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
             {% endfor %}
             {% endif %}
-            <div class="mb-3">
-                <label for="emailid" class="form-label">Email address</label>
-                <input type="email" class="form-control borderg" id="emailid" name="email" required>
-            </div>
             <div class="my-3">
-                <label for="pass" class="form-label">Password</label>
+                <label for="pass" class="form-label">New Password</label>
                 <input type="password" class="form-control borderg" id="pass" name="pass" required>
             </div>
             <div class="my-3">
@@ -36,9 +32,6 @@
             </div>
             <div class="my-3 my-sm-4">
                 <button type="submit" class="btn btn-success w-100 colorg border-0" curs onclick="matchpassword()">Continue</button>
-            </div>
-            <div class="mt-2 mt-sm-4 d-flex justify-content-center">
-                <small class="d-flex"><span class="d-none d-sm-block">Back to an sign in? &nbsp;</span><a href="{% url 'signin' %}" class="textg fw-bold">Sign in here</a></small>
             </div>
         </form>
     </div>
