@@ -1,0 +1,99 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+
+{% extends 'superuser/admin_index.html' %}
+{% block admin_index %}
+  <form action="." method="post">
+    {% csrf_token %}
+  
+    <div class="d-flex justify-content-between pb-4">
+      <div><h3>Product</h3></div>
+      <div class=""><button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button">Add Product</button></div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Product</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <label for="">Product Name</label>
+            <input type="text" name="name" id="name" class="form-control" required>
+            <label for="">sub category</label>
+            <select name="subcategory" id="" class="form-select">
+              {% for subcategory in subcategories %}
+              <option value="{{ subcategory.id }}">{{ subcategory.name }}</option>
+              {% endfor %}
+            </select>
+            <label for="">brand</label>
+            <select name="brand" id="" class="form-select">
+              {% for brand in brands %}
+              <option value="{{ brand.id }}">{{ brand.name }}</option>
+              {% endfor %}
+            </select>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">description</label>
+              <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <label for="">visibility</label>
+            <select name="visibility" id="" class="form-select">
+              <option value=True>visible</option>
+              <option value=False>hidden</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <input class="btn btn-primary" type="submit" value="Save">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="table table-bordered" id="colors">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>id</th>
+          <th>Brand</th>
+          <th>Model Name</th>
+          <th>Category</th>
+          <th>Sub Category</th>
+          <th>short description</th>
+          {% comment %} <th>Actual Price</th>
+          <th>Discount Price</th>
+          <th>Colors</th> {% endcomment %}
+          <th>Variants</th>
+          <th>visibility</th>
+          <th>updated</th>
+          <th>created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          <tr>
+            <th>{{ forloop.counter }}</th>
+            <td><a href="{% url 'admin_product_variants' pk=product.id %}">{{ product.id }}</a></td>
+            <td>{{ product.brand.name }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category.name }}</td>
+            <td>{{ product.sub_category.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>
+              {% for variant in product.variants.all %}
+              <div class="d-flex gap-2">
+              <input type="color" class="form-control form-control-color" value="{{ variant.color }}" disabled />
+              {{ variant.color_name }}
+              </div>
+              {% endfor %}
+            </td>
+            <td>{{ product.visibility }}</td>
+            <td>{{ product.updated_at }}</td>
+            <td>{{ product.created_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+{% endblock %}

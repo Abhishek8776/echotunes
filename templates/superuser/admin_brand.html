@@ -1,0 +1,65 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+
+{% extends 'superuser/admin_index.html' %}
+{% block admin_index %}
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="d-flex justify-content-between pb-4">
+      <div><h3>Brands</h3></div>
+      <div class=""><button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button">Add Brand</button></div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <label for="name">Brand Name</label>
+            <input type="text" name="brand" id="name" class="form-control" required>
+            <label for="img">Brand logo</label>
+            <input type="file" name="logo" id="img" class="form-control" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <input class="btn btn-primary" type="submit" value="Save">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="table table-bordered " id="colors">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>id</th>
+          <th>brand</th>
+          <th>logo</th>
+          <th>updated</th>
+          <th>created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for brand in brands %}
+          <tr>
+            <th>{{ forloop.counter }}</th>
+            <td>{{ brand.id }}</td>
+            <td>{{ brand.name }}</td>
+            <td>
+              <figure class="figure">
+                <img src="{{ brand.logo.url }}" class="figure-img rounded" height="100" alt="banner">
+                {% comment %} <figcaption class="figure-caption"><b>ID  :  {{ brand.id }}</b></figcaption> {% endcomment %}
+              </figure>
+            </td>
+            <td>{{ brand.updated_at }}</td>
+            <td>{{ brand.created_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+{% endblock %}

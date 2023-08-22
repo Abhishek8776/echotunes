@@ -3,3 +3,5 @@ psycopg2
 django-jazzmin
 pillow
 python-dotenv
+django-colorfield
+django-allauth
