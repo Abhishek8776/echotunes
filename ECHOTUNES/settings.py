@@ -14,7 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv()   
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,13 +116,22 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'USERS.User'
 
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+SITE_ID = 1
+LOGIN_URL = 'user_signin'
+LOGIN_REDIRECT_URL = 'user_home'
+LOGOUT_REDIRECT_URL = 'user_home'
+
+# Additional configuration settings
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL = 'user_home'
+# LOGIN_REDIRECT_URL = 'user_home'
 
 
 AUTHENTICATION_BACKENDS = [
@@ -130,6 +139,18 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# SOCIALACCOUNT_PIPELINE = [
+#     'USERS.pipelines.update_user_data_from_google',
+
+# ]
+    # 'allauth.socialaccount.pipeline.social_auth.social_details',
+    # 'allauth.socialaccount.pipeline.social_auth.social_uid',
+    # 'allauth.socialaccount.pipeline.social_auth.auth_allowed',
+    # 'allauth.socialaccount.pipeline.social_auth.social_user',
+    # 'allauth.socialaccount.pipeline.social_auth.associate_user',
+    # 'allauth.socialaccount.pipeline.social_auth.load_extra_data',
+    # 'allauth.socialaccount.pipeline.social_auth.login',
+    # 'allauth.socialaccount.pipeline.social_auth.redirect_url',
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -146,6 +167,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+SOCIALACCOUNT_ADAPTER = 'USERS.adapters.CustomSocialAccountAdapter'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -200,3 +222,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+RAZORPAY_API_KEY = os.environ.get('RAZORPAY_API_KEY')
+RAZORPAY_API_SECRET = os.environ.get('RAZORPAY_API_SECRET')

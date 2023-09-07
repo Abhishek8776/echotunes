@@ -2,94 +2,90 @@
 
 {% extends 'superuser/admin_index.html' %}
 {% block admin_index %}
-  <form action="." method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-  
-    <div class="d-flex justify-content-between pb-4">
-      <div><h3>{{ product.name }}</h3></div>
-      <div class=""><button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button">Add Variant</button></div>
-    </div>
-
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Color</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-
-            <label for="">color</label>
-            <div class="d-flex gap-2">
-              <input type="text" name="name" id="color" class="form-control" placeholder="Color Name" required>
-              <input type="color" name="code" id="" class="form-control form-control-color" required>
-            </div>
-            <label for="">Actual Price</label>
-            <input class="form-control" type="text" name="actual" id="" required>
-            <label for="">Discount Price</label>
-            <input class="form-control" type="text" name="discount" id="" required> 
-            <label for="">Stock</label>
-            <input class="form-control" type="text" name="stock" id="" required>
-            <label for="">Cover Image</label>
-            <input class="form-control" type="file" name="cover" id="" required>
-            <label for="">Extra Images</label>
-            <input class="form-control" type="file" name="images" id="" multiple required>
-
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <input class="btn btn-primary" type="submit" value="Save">
-          </div>
+<div class="d-flex justify-content-between pb-4">
+  <div><h3>{{ product.name }}</h3></div>
+  <div class=""><button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button">Add Variant</button></div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="." method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Color</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      </div>
-    </div>
+        <div class="modal-body">
+          <label for="">color</label>
+          <div class="d-flex gap-2">
+            <input type="text" name="name" id="color" class="form-control" placeholder="Color Name" required>
+            <input type="color" name="code" id="" class="form-control form-control-color" required>
+          </div>
+          <label for="">Actual Price</label>
+          <input class="form-control" type="text" name="actual_price" id="" required>
+          <label for="">Discount Price</label>
+          <input class="form-control" type="text" name="selling_price" id="" required> 
+          <label for="">Stock</label>
+          <input class="form-control" type="text" name="stock" id="" required>
+          <label for="">Cover Image</label>
+          <input class="form-control" type="file" name="cover" id="" required>
+          <label for="">Extra Images</label>
+          <input class="form-control" type="file" name="images" id="" multiple required>
 
-    <table class="table table-bordered" id="colors">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Variant id</th>
-          <th>color</th>
-          <th>Actual Price</th>
-          <th>Discount Price</th>
-          <th>Discount(%)</th>
-          <th>Stock</th>
-          <th>Cover Image</th>
-          <th>images</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for variant in variants %}
-          <tr>
-            <th>{{ forloop.counter }}</th>
-            <td>{{ variant.id }}</td>
-            <td>
-              <input type="color" class="form-control form-control-color" value="{{ variant.color }}" disabled />
-              {{ variant.color_name }}
-            </td>
-            <td>{{ variant.actual_price }}</td>
-            <td>{{ variant.discount_price }}</td>
-            <td>{{ variant.discount_percentage }}</td>
-            <td>{{ variant.stock }}</td>
-            <td>
-              <figure class="figure">
-                <img src="{{ variant.cover_image.url }}" class="figure-img rounded" height="100" alt="banner">
-                {% comment %} <figcaption class="figure-caption"><b>ID  :  {{ brand.id }}</b></figcaption> {% endcomment %}
-              </figure>
-            </td>
-            <td>
-              {% for variant_image in variant.variant_images.all %}
-                <figure class="figure">
-                  <img src="{{ variant_image.image.url }}" class="figure-img rounded" height="100" alt="banner">
-                  {% comment %} <figcaption class="figure-caption"><b>ID  :  {{ brand.id }}</b></figcaption> {% endcomment %}
-                </figure>
-              {% endfor %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <input class="btn btn-primary" type="submit" value="Save">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<table class="table table-bordered" id="colors">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Variant id</th>
+      <th>color</th>
+      <th>Actual Price</th>
+      <th>Discount Price</th>
+      <th>Discount(%)</th>
+      <th>Stock</th>
+      <th>Cover Image</th>
+      <th>images</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for variant in variants %}
+      <tr>
+        <th>{{ forloop.counter }}</th>
+        <td>{{ variant.id }}</td>
+        <td>
+          <input type="color" class="form-control form-control-color" value="{{ variant.color }}" disabled />
+          {{ variant.color_name }}
+        </td>
+        <td>{{ variant.actual_price }}</td>
+        <td>{{ variant.selling_price }}</td>
+        <td>{{ variant.discount_percentage }}</td>
+        <td>{{ variant.stock }}</td>
+        <td>
+          <figure class="figure">
+            <img src="{{ variant.cover_image.url }}" class="figure-img rounded" height="100" alt="banner">
+            {% comment %} <figcaption class="figure-caption"><b>ID  :  {{ brand.id }}</b></figcaption> {% endcomment %}
+          </figure>
+        </td>
+        <td>
+          {% for variant_image in variant.variant_images.all %}
+            <figure class="figure">
+              <img src="{{ variant_image.image.url }}" class="figure-img rounded" height="100" alt="banner">
+              {% comment %} <figcaption class="figure-caption"><b>ID  :  {{ brand.id }}</b></figcaption> {% endcomment %}
+            </figure>
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

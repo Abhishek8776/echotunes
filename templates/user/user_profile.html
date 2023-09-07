@@ -1,15 +1,231 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+{% extends 'user/user_index.html' %}
+{% block user_index %}
+{% load static %}
+<div class="row">
+  <div class="col-3 vh-100 border-end">
+    <div class="list-group d-flex" role="group">
+      <li class="list-group-item border-0">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="changecontent('profiledetails','addressdetails','orderdetails')" checked>
+        <label class="btn btn-outline-primary list-group-item rounded-0" for="btnradio1">Profile</label>
+      </li>
+      <li class="list-group-item border-0">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  onclick="changecontent('addressdetails','profiledetails','orderdetails')">
+        <label class="btn btn-outline-primary list-group-item rounded-0" for="btnradio2">Manage Addresses</label>
+      </li>
+      <li class="list-group-item border-0">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" onclick="changecontent('orderdetails','addressdetails','profiledetails')">
+        <label class="btn btn-outline-primary list-group-item rounded-0" for="btnradio3">My Orders</label>
+      </li>
+    </div>
+  </div>
+  <div class="col-9">
+    <div class="d-block" id='profiledetails'>
+      <div class="mb-2" style="height: 4em;width: 4em;"><img src="{% static 'images/profile/profile-user.png' %}" class="img-fluid" alt=""></div>
+      <div class="row g-3 align-items-center mb-3">
+        <div class="col-auto">
+          <label for="#username" class="col-form-label h6 has-validation">Name</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" id="username"  class="form-control" value="{{ user.name }}" readonly>
+        </div>
+      </div>
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label for="#useremail" class="col-form-label h6 has-validation">Email</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" id="useremail" class="form-control" value="{{ user.email }}" readonly>
+        </div>
+      </div>
+    </div>
 
-    <h1>User Profile</h1>
-    <p>Name: {{ user.name }}</p>
-    <p>Email: {{ user.email }}</p>
+    <div class="d-none" id="addressdetails">
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#add_address" type="button">Add Address</button>
+      </div>
+      {% for address in addresses %}
+      <div class="border rounded-2 p-2 my-2">
+        <div class="d-flex justify-content-between">
+          <div class="text-bg-primary badge">
+            {% if address.address_type == 'Home' %} <i class="bi bi-house"></i>{% elif address.address_type == 'Office' %} <i class="bi bi-buildings"></i>{% endif %} {{ address.address_type }}
+          </div>
+          <div class="dropdown">
+            <a data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item text-primary" data-bs-toggle="modal" data-bs-target="#update_address{{forloop.counter}}"><i class="bi bi-pencil-square"></i> Edit</li>
+              <li>
+                <a class="dropdown-item text-danger" href="{% url 'delete_address' pk=address.id %}"><i class="bi bi-trash"></i> Delete</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div>{{ address.gender }}. {{ address.name }} - {{ address.mobile }}</div>
+        <div>{{ address.address }}</div>
+        <div>{{ address.place }} - {{ address.pincode }}</div>
+      </div>
 
-</body>
-</html>
+      <div class="modal fade" id="update_address{{forloop.counter}}" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form action="{% url 'update_address' pk=address.id %}" method="post">
+                {% csrf_token %}
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Address</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">              
+                <label for="address_type">Address Type</label>
+                <select name="address_type" id="address_type" class="form-select mb-2">
+                  <option value="Home" {% if address.address_type == 'Home' %}selected{% endif %}>Home</option>
+                  <option value="Office" {% if address.address_type == 'Office' %}selected{% endif %}>Office</option>
+                </select>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" class="form-control mb-2" required value="{{ address.name }}">
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender" class="form-select mb-2">
+                  <option value="Mr" {% if address.gender == 'Mr' %}selected{% endif %}>Male</option>
+                  <option value="Mrs" {% if address.gender == 'Mrs' %}selected{% endif %}>Female</option>
+                </select>
+                <label for="mobile">Mobile</label>
+                <input type="text" name="mobile" id="mobile" class="form-control mb-2" required value="{{ address.mobile }}">
+                <label for="address">Address</label>
+                <textarea name="address" id="address" class="form-control mb-2" rows="3">{{ address.address }}</textarea>
+                <label for="place">Place</label>
+                <input type="text" name="place" id="place" class="form-control mb-2" required value="{{ address.place }}">
+                <label for="pincode">Pincode</label>
+                <input type="text" name="pincode" id="pincode" class="form-control mb-2" value="{{ address.pincode }}">
+                <label for="landmark">Land Mark</label>
+                <input type="text" name="landmark" id="landmark" class="form-control mb-2" required value="{{ address.landmark }}">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="d-none" id='orderdetails' style="display: none;">
+      Orders
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade" id="add_address" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="{% url 'add_address' %}" method="post">
+          {% csrf_token %}
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Add Address</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              
+              <label for="address_type">Address Type</label>
+              <select name="address_type" id="address_type" class="form-select mb-2">
+                  <option value="Home" selected>Home</option>
+                  <option value="Office">Office</option>
+              </select>
+              
+              <label for="name">Name</label>
+              <input type="text" name="name" id="name" class="form-control mb-2" required>
+              
+              <label for="gender">Gender</label>
+              <select name="gender" id="gender" class="form-select mb-2">
+                  <option value="Mr" selected>Male</option>
+                  <option value="Mrs">Female</option>
+              </select>
+              
+              <label for="mobile">Mobile</label>
+              <input type="text" name="mobile" id="mobile" class="form-control mb-2" required>
+              
+              <label for="address">Address</label>
+              <textarea name="address" id="address" class="form-control mb-2" rows="3"></textarea>
+              
+              <label for="place">Place</label>
+              <input type="text" name="place" id="place" class="form-control mb-2" required>
+              
+              <label for="landmark">Land Mark</label>
+              <input type="text" name="landmark" id="landmark" class="form-control mb-2" required>
+
+              <label for="#addpincode">Pincode</label>
+              <input type="text" name="pincode" id="addpincode" class="form-control mb-2" onkeyup="fetchPincodeData()" aria-describedby="pinhelp" required>
+              <div id="pinhelp" class="form-text text-danger"></div>
+
+              <label for="postoffice">Post Office</label>
+              {% comment %} <input type="text" class="form-control mb-2" id="postoffice" readonly> {% endcomment %}
+              <select class="form-select" id="postoffice">
+              </select>
+
+              <label for="district">District:</label>
+              <input type="text" class="form-control mb-2" id="district" readonly>
+
+              <label for="state">State:</label>
+              <input type="text" class="form-control mb-2" id="state" readonly>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary" value="Save">
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  function changecontent(itemid1,itemid2,itemid3){
+    item1 = document.getElementById(itemid1)
+    item2 = document.getElementById(itemid2)
+    item3 = document.getElementById(itemid3)
+    item1.classList.replace('d-none','d-block')
+    item2.classList.replace('d-block','d-none')
+    item3.classList.replace('d-block','d-none')
+  }
+  function fetchPincodeData() {
+    const pincodeInput = document.getElementById('addpincode');
+    const dropdown = document.getElementById('postoffice');
+    const pincode = pincodeInput.value;
+    dropdown.innerHTML = '';
+    
+    if (pincode.length !== 6) {
+      document.getElementById('pinhelp').textContent = 'PIN code must be 6 characters long.';
+      pincodeInput.classList.add('is-invalid');
+      pincodeInput.classList.remove('is-valid');
+      return;
+    } else {
+        document.getElementById('pinhelp').textContent = '';
+        pincodeInput.classList.remove('is-invalid');
+        pincodeInput.classList.add('is-valid');
+    }
+    const apiUrl = `https://api.postalpincode.in/pincode/${pincode}`;
+    fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data[0] && data[0].Status === 'Success') {
+          const postofficeData = data[0].PostOffice.map(item => item.Name);
+          postofficeData.forEach(name => {
+          const option = document.createElement('option');
+          option.value = name; 
+          option.text = name;
+          dropdown.appendChild(option);
+        });
+          //document.getElementById('postoffice').value = postOfficeData.Name;
+          document.getElementById('district').value = data[0].PostOffice[0].District;
+          document.getElementById('state').value = data[0].PostOffice[0].State;
+      } else {
+          document.getElementById('pinhelp').textContent = 'Invalid PIN Code';
+          pincodeInput.classList.add('is-invalid');
+      }
+    })
+    .catch(error => {
+        document.getElementById('pinhelp').textContent = 'An error occurred while fetching data.';
+    }); 
+  }
+</script>
+
+{% endblock user_index %}

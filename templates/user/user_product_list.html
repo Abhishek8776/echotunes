@@ -1,49 +1,314 @@
-{% extends 'user_index.html' %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+{% extends 'user/user_index.html' %}
 {% block user_index %}
-  <div class="container-fluid px-4 px-sm-4 px-lg-5">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-2 g-lg-3">
-      <div class="col">
-        <div class="p-3 card rounded-3 border border-1 border-secondary-subtle shadow">
-          <img src="images/product.svg" class="card-img-top bg-secondary-subtle border rounded-3 p-2" alt="product" />
-          <div class="card-img-overlay">
-            <img src="images/heart.svg" class="smallicon m-2 float-end d-block" id="h1" onclick="wish('h1','h2')" alt="heart" />
-            <img src="images/heartfill.svg" class="smallicon m-2 float-end d-none" id="h2" onclick="wish('h2','h1')" alt="heart" />
-          </div>
-          <div class="card-body p-0">
-            <div class="pt-2">
-              <img src="images/star.svg" class="verysmallicon mb-2" alt="star" />
-              <span class="card-text text-secondary fw-semibold">4.5 (12)</span>
-            </div>
-            <h4 class="card-title fw-bold mt-0 pt-0">Boat</h4>
-            <h5 class="card-subtitle mb-2 fw-bold">Rockers 335</h5>
-            <span class="card-text fw-medium h5">3299₹</span>
-            <span class="card-text fw-bold text-decoration-line-through text-secondary h6">4999₹</span>
-            <span class="card-text small text-success fw-bold">60% off</span>
-            {% comment %} <div class="d-flex mt-2">
-              <span class="p-2 bg-danger rounded-circle me-1"></span>
-              <span class="p-2 bg-success rounded-circle me-1"></span>
-            </div> {% endcomment %}
-            <h6 class="card-text text-secondary fw-bold mt-2">Free Delivery</h6>
+{% load static %}
+<div class="row">
+  <div class="col-12 col-sm-2 border">
+    <div class="d-flex justify-content-between">
+      <div class="h4 py-3">FILTERS</div>
+      <div class="{% if params_present %}d-flex{% else %}d-none{% endif %}">
+        <a href="{% url 'product_list' %}" class="text-decoration-none small my-auto">CLEAR ALL</a>
+      </div>
+    </div>
+    <div class="accordion" id="accordionExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
+            BRANDS
+          </button>
+        </h2>
+        <div id="collapse1" class="accordion-collapse {% if brand_present %} show {% else %} collapse {% endif %}" data-bs-parent="#accordionExample">
+          <div class="accordion-body py-0">
+            <ul class="list-group list-group-flush">
+              {% for brand in brands %}
+              <li class="list-group-item">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="brand{{ forloop.counter }}" onchange="brand(this,'{{ brand.0 }}')" {% if brand.0|stringformat:"s" in brand_items %}checked{% endif %}>
+                  <label class="form-check-label" for="brand{{ forloop.counter }}">{{ brand.1 }}</label>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
       </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+            CATEGORIES
+          </button>
+        </h2>
+        <div id="collapse2" class="accordion-collapse {% if sub_present %} show {% else %} collapse {% endif %}" data-bs-parent="#accordionExample">
+          <div class="accordion-body py-0">
+            <ul class="list-group list-group-flush">
+              {% for subcategory in subcategories %}
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" class="form-check-input" id="subcategory{{ forloop.counter }}" onchange="subcategory(this,'{{ subcategory.0 }}')" {% if subcategory.0|stringformat:"s" in sub_items %}checked{% endif %}>
+                  <label class="form-check-label" for="subcategory{{ forloop.counter }}">{{ subcategory.1 }}</label>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">DISCOUNT</button>
+        </h2>   
+        <div id="collapse3" class="accordion-collapse {% if discount_items %}show{% else %}collapse{% endif %}"            data-bs-parent="#accordionExample">       
+          <div class="accordion-body p-0 pb-2">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="discount5" class="form-check-input" onchange="discount(this,'50')" {% if '50' in discount_items %}checked{% endif %}>
+                  <label class="form-check-label" for="discount5">50% or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="discount4" class="form-check-input" onchange="discount(this,'40')" {% if '40' in discount_items %}checked{% endif %}>
+                  <label class="form-check-label" for="discount4">40% or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="discount3" class="form-check-input" onchange="discount(this,'30')" {% if '30' in discount_items %}checked{% endif %}>
+                  <label class="form-check-label" for="discount3">30% or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="discount2" class="form-check-input" onchange="discount(this,'20')" {% if '20' in discount_items %}checked{% endif %}>
+                  <label class="form-check-label" for="discount2">20% or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="discount1" class="form-check-input" onchange="discount(this,'10')" {% if '10' in discount_items %}checked{% endif %}>
+                  <label class="form-check-label" for="discount1">10% or more</label>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>      
+      
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">RATINGS</button>
+        </h2>   
+        <div id="collapse4" class="accordion-collapse {% if ratings %}show{% else %}collapse{% endif %}"            data-bs-parent="#accordionExample">       
+          <div class="accordion-body p-0 pb-2">
+            <ul class="list-group list-group-flush">
+
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="rating4" class="form-check-input" onchange="rating(this,'40')" {% if '4' in ratings %}checked{% endif %}>
+                  <label class="form-check-label" for="rating4">4 <i class="bi bi-star-fill"></i> or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="rating3" class="form-check-input" onchange="rating(this,'30')" {% if '3' in ratings %}checked{% endif %}>
+                  <label class="form-check-label" for="rating3">3 <i class="bi bi-star-fill"></i> or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="rating2" class="form-check-input" onchange="rating(this,'20')" {% if '2' in ratings %}checked{% endif %}>
+                  <label class="form-check-label" for="rating2">2 <i class="bi bi-star-fill"></i> or more</label>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="form-check ms-2">
+                  <input type="checkbox" id="rating1" class="form-check-input" onchange="rating(this,'10')" {% if '1' in ratings %}checked{% endif %}>
+                  <label class="form-check-label" for="rating1">1 <i class="bi bi-star-fill"></i> or more</label>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="ps-3 ms-1 pt-2">PRICE</div>
+        <div class="accordion-body p-0 pb-2">
+          <div class="my-js-slider"></div>
+        </div>
+      </div>
+
+      <div class="h4 pt-3 pb-1">SORT</div>
+      <ul class="list-group pb-3">
+          <li onclick="sorting('price_low')" class="list-group-item {% if sorted == 'price_low' %}active{% endif %}" style="cursor: pointer;">PRICE LOW TO HIGH</li>
+          <li onclick="sorting('price_high')" class="list-group-item {% if sorted == 'price_high' %}active{% endif %}" style="cursor: pointer;">PRICE HIGH TO LOW</li>
+          <li onclick="sorting('new')" class="list-group-item {% if sorted == 'new' %}active{% endif %}" style="cursor: pointer;">NEWEST FIRST</li>
+          <li onclick="" class="list-group-item" style="cursor: pointer;">POPULARITY</li>
+        </ul>
+
     </div>
   </div>
+
+  <div class="col-12 col-sm-10">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-2 g-lg-3">
+      {% for variant in page %}
+      <div class="col">
+        <div class="p-3 card rounded-3 border border-1 shadow h-100">
+          <a href="{% url 'user_product_details' pk=variant.id %}" class="position-relative" id="mainlink{{ forloop.counter }}">
+            <img src="{{ variant.cover_image.url }}" class="card-img-top bg-secondary-subtle border rounded-3 p-2" alt="product" id="mainimg{{ forloop.counter }}"/>
+          </a>
+          <div class="position-absolute end-0 h3 me-4 mt-2">
+              <a href="{% url 'update_wishlist_items' pk=variant.product.id %}" class="text-danger">
+                <i class="bi bi-suit-heart{% if variant.is_in_wishlist %}-fill{% endif %}"></i>
+              </a>
+          </div> 
+          <div class="card-body p-0">
+            <div class="pt-2">
+              <span class="text-warning"><i class="bi bi-star-fill"></i></span> 4.5 (12)
+            </div>
+            <h4 class="card-title fw-bold mt-0 pt-0">{{ variant.product.brand.name }} {{ variant.product.name }}</h4>
+            <span class="card-text fw-medium h5">₹{{ variant.selling_price }}</span>
+            <span class="card-text fw-bold text-decoration-line-through text-secondary h6">₹{{ variant.actual_price }}</span>
+            <span class="card-text small text-success fw-bold">{{ variant.discount_percentage }}%
+              off</span>
+            <h6 class="card-text text-secondary fw-bold mt-2">Free Delivery</h6>
+            <div class="d-flex py-1">
+            {% for similar_variant in variant.product.variants.all %}
+            <div class="col-2 pe-1">
+              <div class="rounded-circle bg-body-secondary p-1">
+                <a href="{% url 'user_product_details' pk=similar_variant.id %}">
+                  <img src="{{ similar_variant.cover_image.url }}" class="img-fluid" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ similar_variant.color_name }}" onmouseover="change('{{ forloop.parentloop.counter }}','{{ similar_variant.cover_image.url }}','{% url 'user_product_details' pk=similar_variant.id %}')">
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    <li class="page-link" style="cursor: pointer;" {% if page.has_previous %} onclick="pagination('{{ page.previous_page_number }}')"{% endif %}>&laquo;</li>
+    {% for num in page.paginator.page_range %}
+      <li class="page-link {% if num == page.number %}active{% endif %}" style="cursor: pointer;" onclick="pagination('{{ num }}')">
+      {{ num }}</li>
+    {% endfor %}
+    <li class="page-link" style="cursor: pointer;" {% if page.has_next %} onclick="pagination('{{ page.next_page_number }}')" {% endif %}>&raquo;</li>    
+  </ul>
+</nav>
+
+
+
+
+
+<script>
+
+  let currentUrl = new URL(window.location.href);
+  let urlparams = new URLSearchParams(currentUrl.search);
+
+  function change(mainid,newsrc,newlink){
+  var main_link = document.getElementById('mainlink'+ mainid);
+  var main_img = document.getElementById('mainimg'+ mainid);
+  main_img.src = newsrc;
+  main_link.href = newlink;
+  }
+
+  function brand(checkbox, item_id) {
+    urlparams.set('page', 1);
+    if (checkbox.checked) {
+        urlparams.append('brand_items', item_id);
+    } else {
+        let params = urlparams.getAll('brand_items');
+        params = params.filter(param => param !== item_id);
+        urlparams.delete('brand_items');
+        params.forEach(param => urlparams.append('brand_items', param));
+    }
+    currentUrl.search = urlparams.toString();
+    window.location.href = currentUrl.toString();
+  } 
+
+  function subcategory(checkbox, item_id) {
+    urlparams.set('page', 1);
+    if (checkbox.checked) {
+        urlparams.append('sub_items', item_id);
+    } else {
+        let params = urlparams.getAll('sub_items');
+        params = params.filter(param => param !== item_id);
+        urlparams.delete('sub_items');
+        params.forEach(param => urlparams.append('sub_items', param));
+    }
+    currentUrl.search = urlparams.toString();
+    window.location.href = currentUrl.toString();
+  } 
+
+  function discount(checkbox, value) {
+    urlparams.set('page', 1);
+    if (checkbox.checked) {
+        urlparams.append('discount', value);
+    } else {
+        let params = urlparams.getAll('discount');
+        params = params.filter(param => param !== value);
+        urlparams.delete('discount');
+        params.forEach(param => urlparams.append('discount', param));
+    }
+    currentUrl.search = urlparams.toString();
+    window.location.href = currentUrl.toString();
+  } 
+  
+  function sorting(sortby) {
+    urlparams.set('page', 1);
+    urlparams.set('sort', sortby);
+    currentUrl.search = urlparams.toString();
+    window.location.href = currentUrl.toString();
+  }
+
+  function pagination(page_number){
+    urlparams.set('page', page_number);
+    currentUrl.search = urlparams.toString();
+    window.location.href = currentUrl.toString();
+  }
+</script>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="{% static 'js/wrunner-jquery.js' %} "></script>
+<script>
+  $(document).ready(function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var minValueFromUrl = urlParams.get('min');
+    var maxValueFromUrl = urlParams.get('max');
+
+    var slider = $('.my-js-slider');
+    var count = 0;
+
+    slider.wRunner({
+      type: 'range',
+      rangeValue: {
+        minValue: minValueFromUrl || 0,
+        maxValue: maxValueFromUrl || 10000,
+      },
+      step: 100,
+      onValueUpdate: function(values) {
+        count++;
+        if (count > 7) {
+          let currentUrl = new URL(window.location.href);
+          let urlparams = new URLSearchParams(currentUrl.search);
+          urlparams.set('min', values.minValue);
+          urlparams.set('max', values.maxValue);
+          currentUrl.search = urlparams.toString();
+          window.location.href = currentUrl.toString();
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}
-
-<!--  <div class="d-flex">
-    <div class="form-check form-check-inline m-0">
-        <input class="form-check-input bg-danger" type="radio" name="color" id="color1" value="red">
-    </div>
-    <div class="form-check form-check-inline m-0">
-        <input class="form-check-input bg-success" type="radio" name="color" id="color2" value="blue">
-    </div>
-    <div class="form-check form-check-inline m-0">
-        <input class="form-check-input bg-info" type="radio" name="color" id="color3" value="green">
-    </div>
-</div>  -->
-
-<!--  <div class="col-2">
-    <img src="images/heart.svg" class="img-fluid d-block" id="h1" onclick="wish('h1','h2')" alt="heart">
-    <img src="images/heartfill.svg" class="img-fluid d-none" id="h2" onclick="wish('h2','h1')" alt="heart">
-</div>  -->

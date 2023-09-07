@@ -40,8 +40,8 @@
 
       <h6 class="py-1">{{ variant.product.description }}</h6>
 
-      <span class="fw-medium h4 fw-bold">{{ variant.discount_price }}₹</span>
-      <span class="fw-bold text-decoration-line-through text-secondary h4 px-2">{{ variant.actual_price }}₹</span>
+      <span class="fw-medium h4 fw-bold">₹{{ variant.selling_price }}</span>
+      <span class="fw-bold text-decoration-line-through text-secondary h4 px-2">₹{{ variant.actual_price }}</span>
       <span class="text-success h6 fw-bolder">{{ variant.discount_percentage }}% off</span>
 
       <h6 class="pt-2 fw-bold">Color : {{ variant.color_name }}</h6>

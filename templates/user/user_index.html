@@ -6,17 +6,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="stylesheet" href="{% static '/css/style.css' %}">
+  <link rel="stylesheet" href="{% static '/css/wrunner-default-theme.css' %}">
+
 </head>
 
 <body>
   <nav class="navbar bg-body-tertiary fixed-top border-bottom shadow">
     <div class="container-fluid px-2 px-lg-5">
-      <a class="navbar-brand" href="#"><img src="{% static 'images/logo/smalllogo.svg' %}" alt="smalllogo" height="30"
-          alt=""></a>
+      <a class="navbar-brand" href="{% url 'user_home' %}"><img src="{% static 'images/logo/smalllogo.svg' %}" alt="smalllogo" height="30" alt=""></a>
+      <form class="d-flex" method="get" action="{% url 'product_list' %}" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" name="search">
+        <button class="d-none" type="submit">Search</button>
+      </form>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
         aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -28,18 +32,17 @@
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <form class="d-flex mt-3" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
           <div class="d-flex border-bottom justify-content-between p-3">
             <a class="nav-link" aria-current="page" href="{% url 'user_home' %}">Home</a>
           </div>
           <div class="d-flex border-bottom justify-content-between p-3">
-            <a class="nav-link" aria-current="page" href="#">Profile</a>
+            <a class="nav-link" aria-current="page" href="{% url 'user_profile' %}">Profile</a>
           </div>
           <div class="d-flex border-bottom justify-content-between p-3">
-            <a class="nav-link" aria-current="page" href="#">Wishlist</a>
+            <a class="nav-link" aria-current="page" href="{% url 'product_list' %}">All Products</a>
+          </div>
+          <div class="d-flex border-bottom justify-content-between p-3">
+            <a class="nav-link" aria-current="page" href="{% url 'wish_list' %}">Wishlist</a>
           </div>
           <div class="d-flex border-bottom justify-content-between p-3">
             <a class="nav-link" aria-current="page" href="{% url 'user_cart' %}">Cart</a>
@@ -55,25 +58,23 @@
       </div>
     </div>
   </nav>
-  <div class="pt-5"></div>  
+  <div class="p-5"></div>  
   {% block user_home %}
   {% endblock user_home %}
-  <div class="container">
+  <div class="container-fluid px-1 px-sm-2 px-md-5">
 
 
   {% block user_index %}
   {% endblock user_index %}
   </div>
-
+  <div>footer</div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
   </script>
-
   <script>
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
 </body>
-
 </html>
 

@@ -8,7 +8,7 @@
     <style>
     .overflow-scroll {
       height: 80vh;
-      overflow-y: scroll; /* Or 'auto' depending on your design */
+      overflow-y: scroll; 
     }
 
     .overflow-scroll::-webkit-scrollbar {
@@ -34,15 +34,16 @@
       </div>
 
       <div class="col-9  p-2">
-        <div class="">
-          <i class="bi bi-star-fill text-warning"></i> <span class="text-secondary">4.5 (12)</span>
-        </div>
-        <div class="pt-2">
+        <div class="pt-2 d-flex justify-content-between">
           <h4 class="fw-bold">{{ item.product_variant.product.brand }} {{ item.product_variant.product.name }}</h4>
+          <a class="h4 text-danger" href="{% url 'remove_cart_item' item.product_variant.id %}"><i class="bi bi-trash"></i></a>        
         </div>
-        <div class="">
-          <span class="fw-medium h4">{{ item.product_variant.selling_price }}₹ </span>
-          <span class="fw-bold text-decoration-line-through text-secondary h5">{{ item.product_variant.actual_price }}₹</span>
+        <div>
+          <h6 class="text-secondary">{{ item.product_variant.product.description }}</h6>
+        </div>
+        <div>
+          <span class="fw-medium h4">₹{{ item.product_variant.selling_price }} </span>
+          <span class="fw-bold text-decoration-line-through text-secondary h5">₹{{ item.product_variant.actual_price }}</span>
           <span class=" text-success fw-bold">{{ item.product_variant.discount_percentage }} % off</span>        
         </div>
         <div class="d-flex align-items-center gap-2 pt-2">
@@ -55,14 +56,6 @@
           <div class=" border border-2 border-secondary-subtle rounded-0  px-2">{{ item.count }}</div>
           <a class="text-decoration-none text-body-tertiary" href="{% url 'add_cart_item_count' item.product_variant.id %}" ><i class="bi bi-plus-circle-fill h5"></i></a>
         </div> 
-        <div class="d-flex gap-3 pt-2">
-          <div>
-            <a class="btn btn-sm btn-primary" href="#" role="button">Move To Wish List</a>
-          </div>
-          <div>
-            <a class="btn btn-sm btn-secondary" href="{% url 'remove_cart_item' item.product_variant.id %}" role="button">Remove</a>
-          </div>
-        </div>
       </div>
     </div>
     {% endfor %}
@@ -73,12 +66,12 @@
       <div class="h5 ">PRICE DETAILS</div>
       <hr>
       <div class="row">
-        <div class="col h6 text-secondary">Price ({{ total_count }} items)</div>
-        <div class="col h6 text-secondary">₹{{ total_actual_price }}</div>
+        <div class="col h6 text-secondary">Price ({{ cart.total_count }} items)</div>
+        <div class="col h6 text-secondary">₹{{ cart.total_actual_price }}</div>
       </div>
       <div class="row">
         <div class="col h6 text-secondary">Discount</div>
-        <div class="col text-success h6">-₹{{ total_discount_price }}</div>
+        <div class="col text-success h6">-₹{{ cart.total_discount_price }}</div>
       </div>
       <div class="row">
         <div class="col h6 text-secondary">Coupon Discount</div>
@@ -91,17 +84,15 @@
       <hr>
       <div class="row">
         <div class="col h6">Total Amount</div>
-        <div class="col h6">₹{{ total_selling_price }}</div>
+        <div class="col h6">₹{{ cart.total_selling_price }}</div>
       </div>
       <hr>
       <div class="d-grid py-2">
-        <a class="btn btn-primary" href="#" role="button">PLACE ORDER</a>
+        <a class="btn btn-primary" href="{% url 'checkout' %}" role="button">PLACE ORDER</a>
       </div>
       {% comment %} <div class="text-success h6 fw-bold p-0 pt-2">You will save ₹30,772 on this order</div> {% endcomment %}
 
     </div>
   </div>
 </div>
-
-
 {% endblock user_index %}

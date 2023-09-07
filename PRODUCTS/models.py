@@ -43,28 +43,7 @@ class Sub_Category(BaseModel):
     
     class Meta:
       verbose_name_plural = "sub categories"
-
-
-
-# class Product(BaseModel):
-#     name = models.CharField(max_length=100)    
-#     brand = models.ForeignKey(Brand , on_delete=models.CASCADE ,related_name='brands')
-#     category = models.ForeignKey(Category , on_delete=models.CASCADE ,related_name='categories')
-#     sub_category = models.ForeignKey(Sub_Category , on_delete=models.CASCADE ,related_name='sub_categories')
-#     image1 = models.ImageField(upload_to="product/",null=True,blank=True)
-#     image2 = models.ImageField(upload_to="product/",null=True,blank=True)
-#     image3 = models.ImageField(upload_to="product/",null=True,blank=True)
-#     image4 = models.ImageField(upload_to="product/",null=True,blank=True)
-#     actual_price = models.IntegerField()
-#     selling_price = models.IntegerField()
-#     stock = models.IntegerField()
-#     description =models.TextField()
-#     visibility = models.BooleanField(default=True)
-
-#     def __str__(self):
-#      return self.model_name
     
-
 
 
 class Product(BaseModel):
@@ -77,6 +56,8 @@ class Product(BaseModel):
 
   def __str__(self):
     return self.name
+  
+
   
 class Product_Variant(models.Model):
   id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4)
@@ -94,6 +75,8 @@ class Product_Variant(models.Model):
     selling_price=int(self.selling_price)
     self.discount_percentage = round((((actual_price - selling_price) / actual_price) * 100))
     super(Product_Variant, self).save(*args, **kwargs)
+
+    
 
 class ProductVarientImage(models.Model):
   id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4)

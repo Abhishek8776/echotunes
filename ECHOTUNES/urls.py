@@ -25,6 +25,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('',include('USERS.urls')),
     path('superuser/',include('SUPERUSER.urls')),
+    # path('products/',include('PRODUCTS.urls')),
 ]
 
 if settings.DEBUG:

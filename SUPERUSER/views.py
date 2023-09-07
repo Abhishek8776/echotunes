@@ -100,6 +100,7 @@ class AdminDashboard(View):
     return render(request, 'superuser/admin_dashboard.html')
   
 
+
 class AdminBanner(View):
 
   def get(self, request):
@@ -124,6 +125,7 @@ class AdminBrand(View):
     logo = request.FILES.get('logo')
     Brand.objects.create(name=brand,logo=logo)
     return redirect('admin_brand')
+
 
 
 class AdminCategory(View):
@@ -175,6 +177,8 @@ class AdminProduct(View):
     Product.objects.create(name=product_name, category=category, sub_category=sub_category, brand=brand, description=description, visibility=visibility)
     return redirect('admin_product')
   
+
+  
 class AdminProductVariants(View):
   def get(self, request, pk):
     specified_product = get_object_or_404(Product, id=pk)
@@ -184,13 +188,14 @@ class AdminProductVariants(View):
   def post(self, request, pk):
     color_name = request.POST.get('name')
     color_code = request.POST.get('code')
-    actual_price = request.POST.get('actual')
-    discount_price = request.POST.get('discount')
+    actual_price = request.POST.get('actual_price')
+    selling_price = request.POST.get('selling_price')
     stock = request.POST.get('stock')
     cover_image = request.FILES.get('cover')
     images = request.FILES.getlist('images')
     product = get_object_or_404(Product, id=pk)
-    product_variant = Product_Variant.objects.create(color_name=color_name,color=color_code,actual_price=actual_price,       discount_price=discount_price,stock=stock,cover_image=cover_image,product=product)
+    print(actual_price,selling_price,color_code,color_name)
+    product_variant = Product_Variant.objects.create(color_name=color_name,color=color_code,actual_price=actual_price,       selling_price=selling_price,stock=stock,cover_image=cover_image,product=product)
     for image in images:
       ProductVarientImage.objects.create(image=image,product_variant=product_variant)
     return redirect('admin_product_variants',pk=pk)
