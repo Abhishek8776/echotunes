@@ -10,6 +10,7 @@ from PRODUCTS.models import *
 from django.urls import reverse
 from USERS.email import *
 from django.http import Http404
+from datetime import date
 
 
 
@@ -199,3 +200,27 @@ class AdminProductVariants(View):
     for image in images:
       ProductVarientImage.objects.create(image=image,product_variant=product_variant)
     return redirect('admin_product_variants',pk=pk)
+  
+
+
+class AdminCoupons(View):
+  def get(self, request):
+    current_date = date.today().strftime('%Y-%m-%d')
+    coupons = Coupon.objects.all()
+    return render(request, 'superuser/admin_coupon.html', {'coupons':coupons, 'current_date':current_date})
+  
+  def post(self, request):
+    code = request.POST.get('code')
+    count = request.POST.get('count')
+    discount = request.POST.get('discount')
+    minimum_amount = request.POST.get('minimum_amount')
+    start_date = request.POST.get('start_date')
+    end_date = request.POST.get('end_date')
+    Coupon.objects.create(code=code, count=count, discount=discount, minimum_amount=minimum_amount,start_date=start_date, end_date=end_date)
+    return redirect('admin_coupons')
+    # error_message = None
+    # try:
+    #   Coupon.objects.create(code=code, count=count, discount=discount, minimum_amount=minimum_amount,start_date=start_date, end_date=end_date)
+    # except ValidationError as e:
+    #   error_message = str(e)
+    # return redirect(reverse('admin_coupons') + f'?error_message={error_message}')

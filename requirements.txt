@@ -6,3 +6,4 @@ python-dotenv
 django-colorfield
 django-allauth
 razorpay
+schedule

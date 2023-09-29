@@ -8,9 +8,8 @@
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="{% static '/css/style.css' %}">
   <link rel="stylesheet" href="{% static '/css/wrunner-default-theme.css' %}">
-
+  <link rel="stylesheet" href="{% static '/css/style.css' %}">
 </head>
 
 <body>
@@ -67,7 +66,14 @@
   {% block user_index %}
   {% endblock user_index %}
   </div>
-  <div>footer</div>
+  <div class="fixed-bottom d-flex justify-content-center bg-dark px-5">
+    <div class="text-light text-opacity-75">This website is Created By Abhishek P
+      <a href="https://github.com/Abhishek8776" class="text-light"><i class="bi bi-github"></i></a>
+      <a href="https://www.linkedin.com/in/abhishek-p-a58b4724b/" class="text-light"><i class="bi bi-linkedin"></i></a>
+
+    </div>
+    {% comment %} <div><a>? Help Center</a></div> {% endcomment %}
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
   </script>

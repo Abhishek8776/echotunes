@@ -11,45 +11,48 @@
         <div class="h6 text-body-secondaryry"><span class="badge bg-secondary">1</span> LOGIN</div>
         <div class="h6">{{ user.name }} - {{ user.email }}</div>
       </div>
-      {% endif %}
+      {% endif %}    
       <div class="border shadow mb-2 p-3">
-        <div class="h6 text-body-secondaryry"><span class="badge bg-secondary">2</span> DELIVERY ADDRESS</div>
-        <div class="border mb-2 p-2">
+        <div class="d-flex justify-content-between">
+          <div class="h6 text-body-secondaryry"><span class="badge bg-secondary">2</span> DELIVERY ADDRESS</div>
+          <button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#add_address" type="button">Add Address</button>
+        </div>
+        <div class="border my-2 p-2">
           <div class="form-check d-flex justify-content-between">
             <div id="selectedaddress"></div>
             <div class="d-flex">
-              <button class="btn btn-primary fw-semibold my-auto" data-bs-toggle="modal" data-bs-target="#add_address" type="button">Change Address</button>
+              <button class="btn btn-primary fw-semibold my-auto" data-bs-toggle="modal" data-bs-target="#change_address" type="button">Change Address</button>
             </div>
-            <div class="modal fade" id="add_address" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
-              <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Change Address</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body p-2">
-                    {% for address in addresses %}
-                    <div class="form-check border mb-2">
-                      <div class="p-2">
-                        <input class="form-check-input" type="radio" name="address" value="{{ address.id }}" id="address{{ forloop.counter }}" {% if forloop.counter == 1 %}checked{% endif %}>
-                        <label class="form-check-label" for="address{{ forloop.counter }}">
-                          <div>{{ address.gender }}. {{ address.name }} - {{ address.mobile }}</div>
-                          <div>{{ address.address }}</div>
-                          <div>{{ address.place }} - {{ address.pincode }}</div>
-                        </label>
-                      </div>
-                    </div>
-                    {% endfor %}
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" value="Save" onclick="updateaddress()" data-bs-dismiss="modal">Select </button>
-                  </div>
-                </div>
-              </div> 
-            </div> 
           </div>
         </div>
+        <div class="modal fade" id="change_address" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Change Address</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body p-2">
+                {% for address in addresses %}
+                <div class="form-check border mb-2">
+                  <div class="p-2">
+                    <input class="form-check-input" type="radio" name="address" value="{{ address.id }}" id="address{{ forloop.counter }}" {% if forloop.counter == 1 %}checked{% endif %}>
+                    <label class="form-check-label" for="address{{ forloop.counter }}">
+                      <div>{{ address.gender }}. {{ address.name }} - {{ address.mobile }}</div>
+                      <div>{{ address.address }}</div>
+                      <div>{{ address.place }} - {{ address.pincode }}</div>
+                    </label>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Save" onclick="updateaddress()" data-bs-dismiss="modal">Select </button>
+              </div>
+            </div>
+          </div> 
+        </div> 
       </div>
       <div class="border shadow mb-2 p-3">
         <div class="h6 text-body-secondaryry"><span class="badge bg-secondary">3</span> ORDER SUMMERY</div>
@@ -91,22 +94,63 @@
       </div>
       <div class="border shadow mb-2 p-3">
         <div class="h6 text-body-secondaryry"><span class="badge bg-secondary">3</span> PAYMENT OPTIONS</div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="payment_method" value="cod" id="cod" checked>
-            <label class="form-check-label" for="cod">
-              Cash On Delivery
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="payment_method" value="online" id="online">
-            <label class="form-check-label" for="online">
-              Online Payment  
-            </label>
-          </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="payment_method" value="cod" id="cod" checked>
+          <label class="form-check-label" for="cod">
+            Cash On Delivery
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="payment_method" value="online" id="online">
+          <label class="form-check-label" for="online">
+            Online Payment  
+          </label>
+        </div>
       </div>
     </div>
 
     <div class="col-4 p-2">
+      <div class="d-flex justify-content-between align-items-center border border-bottom-0 p-3">
+        <div class="d-flex gap-2 ">
+          <div class=" fs-4 "><i class="bi bi-tag"></i></div>
+          <div class="fw-semibold  pt-1"> Apply Coupons</div>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Apply</button>
+      </div>
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable hiddenscrollbar">
+          <div class="modal-content">
+            <div class="modal-header d-block">
+              <div class="d-flex mb-3">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Apply Coupon</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <input type="text" class="form-control mb-2" id="couponcodeinput" onkeyup="changeinput()" aria-describedby="amount_error" placeholder="Enter coupon code">
+              <div id="amount_error" class="form-text text-danger m-0 p-0"></div>
+            </div>
+            <div class="modal-body">
+              {% for coupon in coupons %}
+                <div class="form-check border rounded mb-2" id="coupondiv{{ coupon.code }}" name="coupondiv" onclick="setcoupon('{{ coupon.code }}','{{ coupon.discount }}')">
+                <div class="p-2">
+                  <div name="coupondetails" discount={{ coupon.discount }}>Get ₹{{ coupon.discount }} off on Amount greater than {{ coupon.minimum_amount }}</div>
+                  <button type="button" class="btn" style="border-style: dashed; background-color: inherit; border-color: inherit; color: inherit;">{{ coupon.code }}</button>
+                  <div name="expirey" class="text-end">Expires on : {{ coupon.end_date }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+              <div>
+                <div class="small text-secondary">Maximun Savings</div>
+                <div class="fw-semibold" id="savings">₹ 0</div>  
+              </div>
+              <input type="hidden" id="hidden_coupon" name="coupon_value" value="0">
+              <a id="coupon_submit" href="{% url "applycoupon" coupon_code='None' %}" class="btn btn-primary">Apply</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="p-3 border">
         <div class="h5 ">PRICE DETAILS</div>
         <hr>
@@ -119,8 +163,16 @@
           <div class="col text-success h6">-₹{{ cart.total_discount_price }}</div>
         </div>
         <div class="row">
+          <div class="col h6 text-secondary">Selling Price</div>
+          <div class="col text-secondary h6">₹{{ cart.total_selling_price }}</div>
+        </div>
+        <div class="row">
           <div class="col h6 text-secondary">Coupon Discount</div>
-          <div class="col h6 text-secondary">0</div>
+          {% if cart.coupon_discount == 0 %}
+            <div class="col h6 text-secondary">₹{{ cart.coupon_discount }}</div>
+          {% else %}
+            <div class="col h6 text-success">-₹{{ cart.coupon_discount }}</div>
+          {% endif %}
         </div>
         <div class="row">
           <div class="col h6 text-secondary">Delivery Charges</div>
@@ -128,28 +180,174 @@
         </div>
         <hr>
         <div class="row">
-          <div class="col h6">Total Amount</div>
-          <div class="col h6">₹{{ cart.total_selling_price }}</div>
+          <div class="col h6">Final Price</div>
+          <div class="col h6">₹{{ cart.final_price }}</div>
         </div>
         <hr>
         <div class="d-grid py-2">
-          <input class="btn btn-primary d-none" id="rzp-button1" type="submit" value="CONFIRM ORDER1">
-          <input class="btn btn-primary d-block" id="cod-button1" type="submit" value="CONFIRM ORDER2">
+          <input class="btn btn-primary d-none" id="rzp-button1" type="submit" value="CONFIRM ORDER">
+          <input class="btn btn-primary d-block" id="cod-button1" type="submit" value="CONFIRM ORDER">
         </div>
       </div>
     </div>
   </div>
 </form>
+<div class="modal fade" id="add_address" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable hiddenscrollbar">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Address</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_address' %}" method="post">
+          {% csrf_token %}
+          <label for="address_type">Address Type</label>
+          <select name="address_type" id="address_type" class="form-select mb-2">
+            <option value="Home" selected>Home</option>
+            <option value="Office">Office</option>
+          </select>
+          
+          <label for="name">Name</label>
+          <input type="text" name="name" id="name" class="form-control mb-2" required>
+          
+          <label for="gender">Gender</label>
+          <select name="gender" id="gender" class="form-select mb-2">
+            <option value="Mr" selected>Male</option>
+            <option value="Mrs">Female</option>
+          </select>
+          
+          <label for="mobile">Mobile</label>
+          <input type="text" name="mobile" id="mobile" class="form-control mb-2" required>
+
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" class="form-control mb-2" required>
+          
+          <label for="address">Address</label>
+          <textarea name="address" id="address" class="form-control mb-2" rows="3"></textarea>
+          
+          <label for="place">Place</label>
+          <input type="text" name="place" id="place" class="form-control mb-2" required>
+          
+          <label for="landmark">Land Mark</label>
+          <input type="text" name="landmark" id="landmark" class="form-control mb-2" required>
+
+          <label for="addpincode">Pincode</label>
+          <input type="text" name="pincode" id="addpincode" class="form-control mb-2" onkeyup="fetchPincodeData(this,'addpinhelp','addpostoffice','adddistrict','addstate')" aria-describedby="addpinhelp" required>
+          <div id="addpinhelp" class="form-text text-danger"></div>
+
+          <label for="postoffice">Post Office</label>
+          <select class="form-select" name="post" id="addpostoffice"></select>
+
+          <label for="district">District:</label>
+          <input type="text" class="form-control mb-2" name="district" id="adddistrict" readonly>
+
+          <label for="state">State:</label>
+          <input type="text" class="form-control mb-2" name="state" id="addstate" readonly>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save">
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// function applycoupon(event,total_price){
+//   let savings = parseInt(document.getElementById('savings').textContent);
+//   let hidden_coupon = document.getElementById("hidden_coupon");
+//   let amount_error = document.getElementById("amount_error");
+//   if (savings == 0){
+//     amount_error.textContent = 'Invalid Coupon';
+//     event.preventDefault();
+//   }
+//   if (savings<total_price){
+//   hidden_coupon.value = savings;
+//   }
+//   else{
+//     amount_error.textContent = 'Coupon not Applicable';
+//     event.preventDefault();
+//   }
+// }
+function setcoupon(code,discount){
+  const couponcodeinput = document.getElementById('couponcodeinput')
+  couponcodeinput.value = code
+  changeinput();
+} 
+function changeinput(){
+  let coupon = document.getElementById("couponcodeinput").value;
+  let coupondivs = document.querySelectorAll('[name="coupondiv"]')
+  let savings = document.getElementById('savings')
+  let coupon_submit = document.getElementById('coupon_submit')
+  let flag = false
+  for (let i = 0; i < coupondivs.length; i++) {
+    let coupondetails=coupondivs[i].querySelector('[name="coupondetails"]');
+    let expirey=coupondivs[i].querySelector('[name="expirey"]');
+    let button=coupondivs[i].querySelector('[type="button"]');
+    if (coupondivs[i].id == `coupondiv${coupon}`){
+      coupondivs[i].classList.add('bg-primary')
+      coupondetails.classList.add("text-light")
+      expirey.classList.add("text-light")
+      button.classList.add("text-light")
+      discount = coupondetails.getAttribute('discount')
+      savings.textContent = `₹ ${discount}`
+      coupon_submit.href = coupon_submit.href.replace('None',coupon)
+      flag = true
+    }
+    else{
+      coupondivs[i].classList.remove('bg-primary')
+      coupondetails.classList.remove("text-light")
+      expirey.classList.remove("text-light")
+      button.classList.remove("text-light")
+    }
+  }
+  if (flag == false){
+    savings.textContent = '₹ 0'
+    coupon_submit.href = coupon_submit.href.replace(coupon,'None')
+  }
+}
+function fetchPincodeData(pincodeInput, helptext, postoffice, district, state) {
+  const dropdown = document.getElementById(postoffice);
+  const pincode = pincodeInput.value;
+  dropdown.innerHTML = '';
+  if (pincode.length !== 6) {
+    document.getElementById(helptext).textContent = 'PIN code must be 6 characters long.';
+    pincodeInput.classList.add('is-invalid');
+    pincodeInput.classList.remove('is-valid');
+    return;
+  } 
+  else {
+    document.getElementById(helptext).textContent = '';
+    pincodeInput.classList.remove('is-invalid');
+    pincodeInput.classList.add('is-valid');
+  }
+  const apiUrl = `https://api.postalpincode.in/pincode/${pincode}`;
+  fetch(apiUrl)
+  .then(response => response.json())
+  .then(data => {
+    if (data && data[0] && data[0].Status === 'Success') {
+        const postofficeData = data[0].PostOffice.map(item => item.Name);
+        postofficeData.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name; 
+        option.text = name;
+        dropdown.appendChild(option);
+      });
+      document.getElementById(district).value = data[0].PostOffice[0].District;
+      document.getElementById(state).value = data[0].PostOffice[0].State;
+    } else {
+      document.getElementById(helptext).textContent = 'Invalid PIN Code';
+      pincodeInput.classList.add('is-invalid');
+    }
+  })
+  .catch(error => {
+    document.getElementById(helptext).textContent = 'An error occurred while fetching data.';
+  }); 
+}
+</script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-
-  function updateaddress(){
-    const selectedradio = document.querySelector("input[name='address']:checked");
-    const radiolabrl = selectedradio.parentElement.querySelector("label");
-    const selectedaddress = document.getElementById('selectedaddress')
-    selectedaddress.innerHTML = radiolabrl.innerHTML;
-  }
-  
   document.addEventListener("DOMContentLoaded", function () {
     const initiallyCheckedRadio = document.querySelector("input[name='address']:checked");
     if (initiallyCheckedRadio) {
@@ -158,7 +356,12 @@
       selectedaddress.innerHTML = radiolabel.innerHTML;
     }
   });
-
+  function updateaddress(){
+    const selectedradio = document.querySelector("input[name='address']:checked");
+    const radiolabrl = selectedradio.parentElement.querySelector("label");
+    const selectedaddress = document.getElementById('selectedaddress')
+    selectedaddress.innerHTML = radiolabrl.innerHTML;
+  }
   const codRadio = document.getElementById("cod");
   const onlineRadio = document.getElementById("online");
   const rzpButton = document.getElementById("rzp-button1");
@@ -176,17 +379,17 @@
 </script>
 <script>
   var options = {
-    "key": "rzp_test_GymqhlzDIArQCb", 
-    "amount": "{{ cart.total_selling_price }}00",
-    "currency": "INR",
+    "key": "{{ payment_api_key }}",
+//    "amount": "{{ cart.final_price }}00",
+//    "currency": "INR",
     "name": "EchoTunes",
     "description": "Test Transaction",
     "image": "https://example.com/your_logo",
-    "order_id": "{{ payment.id }}", 
+    "order_id": "{{ order_id }}", 
     "handler": function (response){
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature);
+      alert(response.razorpay_payment_id);
+      alert(response.razorpay_order_id);
+      alert(response.razorpay_signature);
     },
     "theme": {
       "color": "#3399cc"

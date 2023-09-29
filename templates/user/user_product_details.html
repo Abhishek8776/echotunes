@@ -1,51 +1,50 @@
 {% extends 'user/user_index.html' %}
 {% block user_index %}
 {% load static %}
-{% comment %}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-{% endcomment %}
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
 
 
 <div class="w-100 pt-5"></div>
 
 <div class="container-fluid px-4 px-sm-4 px-lg-5">
-  <div class="row justify-content-center">
+  <div class="row gap-4">
 
+    <div class="col-6 row" >
 
-    <div class="col-6 borde row bg-dange">
-
-      <div class="col-2">
-        <div class="pb-2"><img src="{{ variant.cover_image.url }}" onmouseover="change('{{ variant.cover_image.url }}')"
+      <div class="col-2 hiddenscrollbar" id="subimagebox" style="overflow-y: scroll;">
+        <button id="scroll-up" class="btn btn-sm btn-light border text-secondary z-1 w-100 sticky-top d-block" >
+          <i class="bi bi-caret-up-fill"></i>
+        </button> 
+        <div class="py-1"><img src="{{ variant.cover_image.url }}" onmouseover="change('{{ variant.cover_image.url }}')"
             class="img-fluid border" alt="product">
         </div>
         {% for image in variant.variant_images.all %}
-        <div class="pb-2"><img src="{{ image.image.url }}" onmouseover="change('{{ image.image.url }}')"
-            class="img-fluid border" alt="product"></div>
+        <div class="py-1"><img src="{{ image.image.url }}" onmouseover="change('{{ image.image.url }}')" class="img-fluid border" alt="product"></div>
         {% endfor %}
+        <button id="scroll-down" class="btn btn-sm btn-light border text-secondary z-1 w-100 sticky-bottom d-block" >
+          <i class="bi bi-caret-down-fill"></i>
+        </button> 
       </div>
-      <div class="col-10 d-flex justify-content-center ">
-        <div class="bg-succes">
+      <div class="col-10 d-flex justify-content-center align-items-start ">
+        <div class="" id="mainimagebox">
           <img src="{{ variant.cover_image.url }}" class="img-fluid border" alt="product" id='main'>
         </div>
       </div>
     </div>
 
-    <div class="col-5">
+    <div class="col-6" id="detailsdiv">
 
-      <div class="text-secondary fw-semibold h6 mt-2 ">⭐️ 4.5 ❘ (12) Ratings</div>
-      <h3 class="fw-bold mt-0">{{ variant.product.name }}</h3>
+      <div class="text-secondary fw-semibold h6 mt-3">⭐️ {{ reviews|length }} ❘ ({{ variant.review_count }})</div>
+      <h2 class="fw-bold mt-3">{{ variant.product.name }}</h2>
 
-      <h6 class="py-1">{{ variant.product.description }}</h6>
+      <h6 class="pb-2">{{ variant.product.description }} Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus sit fugiat ab magnam, rem fugit. Ex qui voluptate consequatur eligendi.</h6>
 
-      <span class="fw-medium h4 fw-bold">₹{{ variant.selling_price }}</span>
+      <span class="fw-medium h3 fw-bold">₹{{ variant.selling_price }}</span>
       <span class="fw-bold text-decoration-line-through text-secondary h4 px-2">₹{{ variant.actual_price }}</span>
       <span class="text-success h6 fw-bolder">{{ variant.discount_percentage }}% off</span>
 
-      <h6 class="pt-2 fw-bold">Color : {{ variant.color_name }}</h6>
-
+      <h5 class="pt-3 ">Color : {{ variant.color_name }}</h5>
       <div class="row ps-2">
         {% for similar_variant in variant.product.variants.all %}
         <div class="col-1 m-1 p-0 bg-secondary-subtle rounded-1 border border-2 {% if similar_variant == variant %} border-warning {% endif %}">
@@ -58,30 +57,249 @@
       
 
 
-      <h6 class="pt-3 fw-bold">Check Delivery</h6>
+      <div class="h5 pt-4">Check Delivery</div>
       <div class="col-10">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Enter Pincode" aria-label="Recipient's username"
-            aria-describedby="button-addon2">
-          <button class="btn btn-success colorg" type="button" id="button-addon2">CHECK</button>
+        <input type="text" name="pincode" id="addpincode" class="form-control mb-2" onkeyup="fetchPincodeData(this, 'addpinhelp')" aria-describedby="addpinhelp" placeholder="Enter Pincode" required>
+        <div id="addpinhelp" class="form-text text-danger"></div>
+      </div>
+
+      <div class="d-flex gap-2 col-10 py-3"> 
+        {% if variant.is_in_cart  %} 
+        <a href="{% url 'user_cart' %}" class="btn btn-primary border-0  py-2 col" role="button">
+            <i class="bi bi-cart3"></i> GO TO CART
+          </a>
+        {% else %}
+          <a href="{% url 'user_add_to_cart' pk=variant.id %}" class="btn btn-primary border-0  py-2 col" role="button">
+            <i class="bi bi-cart3"></i> ADD TO CART
+          </a>
+        {% endif %}
+        <a href="{% url 'checkout' pk=variant.id %}" class="btn btn-primary border-0  py-2 col" role="button">
+          <i class="bi bi-lightning"></i>BUY NOW
+        </a>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="d-flex justify-content-between mb-2">
+        <div class="h3 m-0">Ratings and Reviews</div>
+        <div>
+          {% if user.is_authenticated %}
+            {% if variant.is_ordered %}
+            <button class="fw-medium btn btn-primary" data-bs-toggle="modal" data-bs-target="#rating_review"><i class="bi bi-star-fill"></i> Rate and Review</button>
+            {% else %}
+            <button class="fw-medium btn btn-primary" style="cursor: not-allowed;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="You have't purchase this product">Rate and Review</button>
+            {% endif %}
+          {% else %}
+              <a href="{% url 'user_signin' %}" class="fw-medium btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Please sign in to review this product">Rate and Review</a>
+          {% endif %}
         </div>
       </div>
-
-      <div class="d-flex gap-2 col-10 py-3">  
-              <a href="{% url 'user_add_to_cart' pk=variant.id %}" class="btn btn-success border-0 colorg py-2 col" role="button">
-                  <i class="bi bi-cart3"></i> ADD TO CART
-              </a>
-        <button class="btn btn-success border-0 colorg py-2 col" type="button"><i class="bi bi-lightning"></i>
-          BUY NOW</button>
-      </div>
-
-    </div>
-
+        {% if reviews %}
+          <div class="row border">
+            <div class="col-4 d-flex border-end border-bottom">
+              <div class="m-auto text-center">
+                <h1>{{ variant.product.average_rating|floatformat:1 }}</h1>
+                <h6>based on {{ reviews|length }} Reviews</h6>
+              </div>
+            </div>
+            <div class="col-8 d-flex border-bottom p-4">
+              <div class="d-flex flex-column gap-2 pe-2">
+                {% for key in rating_data.keys %}
+                  <div class="m-0 p-0 fw-bold d-flex">
+                    {{ key }} <div class="text-warning"><i class="bi bi-star-fill ps-1"></i></div>
+                  </div>
+                {% endfor %}
+              </div> 
+              <div class="d-flex flex-column gap-3 w-100 pt-1">
+                {% for key,rating in rating_data.items %}
+                <div class="progress" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar" style="background-color: {% if key == 1 %}#D83F31{% elif key == 2 %}#EE9322{% elif key == 3 %}#FEDE00{% elif key == 4 %}#32CD30{% elif key == 5 %}#0A7029{% endif %};width: {{ rating.percentage }}%;">{{ rating.percentage|floatformat:0 }}%</div>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="d-flex flex-column gap-2 ps-2">
+                {% for rating in rating_data.values %}
+                  <div class="m-0 p-0 fw-bold d-flex">{{ rating.count }}</div>
+                {% endfor %}
+              </div>
+            </div>
+            <div>
+              <ul class="list-group list-group-flush w-100">
+                {% for review in variant.product.reviews.all %}
+                  <li class="list-group-item">
+                    <div class="fw-bold">
+                      <span class="text-secondary"><i class="bi bi-star{% if 1 <= review.rating %}-fill text-warning{% endif %}"></i></span>
+                      <span class="text-secondary"><i class="bi bi-star{% if 2 <= review.rating %}-fill text-warning{% endif %}"></i></span>
+                      <span class="text-secondary"><i class="bi bi-star{% if 3 <= review.rating %}-fill text-warning{% endif %}"></i></span>
+                      <span class="text-secondary"><i class="bi bi-star{% if 4 <= review.rating %}-fill text-warning{% endif %}"></i></span>
+                      <span class="text-secondary"><i class="bi bi-star{% if 5 <= review.rating %}-fill text-warning{% endif %}"></i></span>
+                    </div>
+                    <div class="fw-bold">{{review.title}}</div>
+                    <div>{{ review.description }}</div>
+                    <div class="row gap-3 p-3">
+                      {% for review_image in review.review_images.all %}
+                      <div class="col-1 p-0 d-flex align-items-center border">
+                        <img src="{{ review_image.image.url }}" class="img-fluid" alt="img">
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <div class="text-secondary text-end">
+                      {{ review.user.name }} {{ review.created_at |date:"d-m-Y" }} <i class="bi bi-check2-circle"></i>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
+    </div> 
   </div>
+  <div class="p-4"></div>
 </div>
+<div class="modal fade" id="rating_review" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form action="{% url 'add_or_update_review' pk=variant.product.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Rating & Review</h1>
+          <input type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="ratings( {% if reviews %} {{ reviews.current_user_review.rating }} {% else %} 0 {% endif %})">
+        </div>
+        <div class="modal-body mb-2">
+          <label for="rating">Rating</label>
+          <div class="pt-1">
+            <span class="text-secondary h4" id="rating1" onmouseover="ratings(1)"><i class="bi bi-star"></i></span>
+            <span class="text-secondary h4" id="rating2" onmouseover="ratings(2)"><i class="bi bi-star"></i></span>
+            <span class="text-secondary h4" id="rating3" onmouseover="ratings(3)"><i class="bi bi-star"></i></span>
+            <span class="text-secondary h4" id="rating4" onmouseover="ratings(4)"><i class="bi bi-star"></i></span>
+            <span class="text-secondary h4" id="rating5" onmouseover="ratings(5)"><i class="bi bi-star"></i></span>
+            <input type="hidden" name="rating" id="hidden_rating" value="{{ reviews.current_user_review.rating }}">
+            {% comment %} <input type="hidden" name="rating" id="hidden_rating" value="3"> {% endcomment %}
+
+          </div> 
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" class="form-control mb-2 pt-1" value="{{ reviews.current_user_review.title }}" required>
+          
+          <label for="description">Description</label>
+          <textarea name="description" id="description" class="form-control mb-2 pt-1" rows="3" required>{{ reviews.current_user_review.description }}</textarea>
+
+          <label for="imgblock">Images</label>
+          <div class="row py-2 px-3 gap-2" id="imgblock">
+            {% for reviewimage in reviews.current_user_review.review_images.all %}
+            <div class="col-2 border">
+              <img src="{{ reviewimage.image.url }}" class="img-fluid" alt="img">
+            </div>
+            {% endfor %}  
+          </div>
+          <input type="file" name="images" id="img" multiple>
+        </div> 
+        {% if reviews.current_user_review %}
+        <script>
+          window.addEventListener('load', function() {
+            ratings({{ reviews.current_user_review.rating }} );
+          });
+        </script>
+        {% endif %}
+        <div class="modal-footer">
+          <input type="reset" class="btn btn-secondary" data-bs-dismiss="modal" value="Close" onclick="ratings( {% if item.review %}{{ item.review.rating }} {% else %} 0 {% endif %} )" >
+          <input type="submit" class="btn btn-primary" value="Submit">
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 
 
 
 
 <script src="{% static 'js/changeimg.js' %}"></script>
 
+
+<script>
+  function fetchPincodeData(pincodeInput, helptext) {
+    const pincode = pincodeInput.value;
+    const helptextlabel = document.getElementById(helptext)
+    if (pincode.length !== 6) {
+      helptextlabel.classList.replace('text-success','text-danger');
+      helptextlabel.textContent = 'PIN code must be 6 characters long.';
+      pincodeInput.classList.add('is-invalid');
+      pincodeInput.classList.remove('is-valid');
+      return;
+    } else {
+      helptextlabel.textContent = '';
+      pincodeInput.classList.remove('is-invalid');
+      pincodeInput.classList.add('is-valid');
+    }
+
+    const apiUrl = `https://api.postalpincode.in/pincode/${pincode}`;
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data[0] && data[0].Status === 'Success') {
+          helptextlabel.textContent = 'Delivery available';
+          helptextlabel.classList.replace('text-danger','text-success');
+        } else {
+          helptextlabel.textContent = 'Delivery not available';
+          pincodeInput.classList.add('is-invalid');
+        }
+      })
+      .catch((error) => {
+        helptextlabel.textContent = 'An error occurred while fetching data.';
+      });
+  }
+</script>
+
+
+<script> 
+  function ratings(count){
+    document.getElementById(`hidden_rating`).value = count;
+    for (let i = 1; i <= 5; i++) {
+      const star = document.getElementById(`rating${i}`);
+      if (i <= count) {
+        star.classList.replace("text-secondary","text-warning");
+        star.innerHTML = '<i class="bi bi-star-fill"  data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Excellent"></i>';
+      }
+      else{
+        star.classList.replace("text-warning","text-secondary");
+        star.innerHTML = '<i class="bi bi-star"  data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Excellent"></i>';
+      }
+    }
+  }
+
+  window.addEventListener('load', function() {
+    const subimagebox = document.getElementById('subimagebox');
+    const mainimagebox = document.getElementById('mainimagebox');
+    const detailsdiv = document.getElementById('detailsdiv')
+    const mainimgheight = mainimagebox.clientHeight;
+    const subimgheight = subimagebox.clientHeight;
+  //  const detailsdivheight = detailsdiv.clientHeight;
+    const scrollUpButton = document.getElementById('scroll-up');
+    const scrollDownButton = document.getElementById('scroll-down');
+    let scrollPosition = 0;
+    const scrollStep = 50; 
+
+    if (subimgheight <= mainimgheight){
+      scrollUpButton.classList.replace('d-block','d-none')
+      scrollDownButton.classList.replace('d-block','d-none')
+    }
+    subimagebox.style.height = `${mainimgheight}px`;
+    //detailsdiv.style.height = `${mainimgheight}px`
+    scrollUpButton.addEventListener('click', () => {
+      scrollPosition -= scrollStep;
+      if (scrollPosition < 0) {
+          scrollPosition = 0;
+      }
+      subimagebox.scrollTop = scrollPosition;
+    });
+
+    scrollDownButton.addEventListener('click', () => {
+      scrollPosition += scrollStep;
+      if (scrollPosition > subimgheight - mainimgheight) {
+      scrollPosition = subimgheight - mainimgheight;
+      }
+    subimagebox.scrollTop = scrollPosition;
+    });
+
+  });
+
+</script>
 {% endblock user_index %}
+{% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"> {% endcomment %}

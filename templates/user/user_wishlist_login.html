@@ -1,0 +1,13 @@
+{% extends 'user/user_index.html' %}
+{% block user_index %}
+{% load static %}
+<div class="d-flex pt-5 w-100">
+  <figure class="figure m-auto pt-5">
+    <img src="{% static 'images/logo/empty_wishlist.png' %}" style="width: 20em;" alt="img">
+    <figcaption class="figure-caption text-center pt-3"><h4>PLEASE SIGN IN</h4></figcaption>
+    <figcaption class="figure-caption text-center pt-1"><h5>Sign In to view items in your wishlist</h5></figcaption>
+    <figcaption class="figure-caption text-center pt-1">
+      <a class="btn btn-primary fw-medium" href="{% url 'user_signin' %}" role="button">Sign In</a>
+    </figcaption>
+  </figure>
+</div>{% endblock user_index %}

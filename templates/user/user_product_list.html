@@ -169,8 +169,12 @@
               </a>
           </div> 
           <div class="card-body p-0">
-            <div class="pt-2">
-              <span class="text-warning"><i class="bi bi-star-fill"></i></span> 4.5 (12)
+            <div class="pt-2 fw-medium">
+              {% if variant.product.average_rating %}
+                <span class="text-warning"><i class="bi bi-star-fill"></i></span> {{ variant.product.average_rating|floatformat:1 }} (12)
+              {% else %}
+                <span class="text-warning"><i class="bi bi-star-fill"></i></span> Be first to review
+              {% endif %}
             </div>
             <h4 class="card-title fw-bold mt-0 pt-0">{{ variant.product.brand.name }} {{ variant.product.name }}</h4>
             <span class="card-text fw-medium h5">₹{{ variant.selling_price }}</span>
@@ -192,6 +196,13 @@
           </div>
         </div>
       </div>
+      {% empty %}
+      <div class="d-flex pt-5 w-100">
+        <figure class="figure m-auto pt-5">
+          <img src="{% static 'images/logo/result_not_found.png' %}" style="width: 20em;" alt="img">
+          <figcaption class="figure-caption text-center pt-3"><h4>Result Not Found</h4></figcaption>
+        </figure>
+      </div>
       {% endfor %}
     </div>
   </div>
@@ -207,6 +218,7 @@
     <li class="page-link" style="cursor: pointer;" {% if page.has_next %} onclick="pagination('{{ page.next_page_number }}')" {% endif %}>&raquo;</li>    
   </ul>
 </nav>
+<div class="p-3 w-100"></div>
 
 
 

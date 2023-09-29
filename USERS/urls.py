@@ -15,9 +15,13 @@ urlpatterns = [
     path('details/<str:pk>/', views.UserProductDetails.as_view(), name='user_product_details'),
 
     path('profile/', views.UserProfileView.as_view(), name='user_profile'),
+    path('manage_address/',views.UserManageAddress.as_view(), name='manage_address'),
     path('add_address/', views.UserAddAddress.as_view(), name='add_address'),
-    path('update_address/<str:pk>', views.UserUpdateAddress.as_view(), name='update_address'),
-    path('delete_address/<str:pk>', views.UserDeleteAddress.as_view(), name='delete_address'),
+    path('update_address/<str:pk>/', views.UserUpdateAddress.as_view(), name='update_address'),
+    path('delete_address/<str:pk>/', views.UserDeleteAddress.as_view(), name='delete_address'),
+    path('order_history/', views.UserOrderHistory.as_view(), name="order_history"),
+    path('order_history/<str:pk>/', views.UserOrderDetails.as_view(), name='order_details'),
+    path('review/<str:pk>/', views.UserReview.as_view(), name='add_or_update_review'),
 
     path('cart/', views.UserCart.as_view(), name='user_cart'),
     path('add_cart_item/<str:pk>/', views.UserAddToCart.as_view(), name='user_add_to_cart'),
@@ -26,6 +30,7 @@ urlpatterns = [
     path('remove_cart_item/<str:pk>/', views.UserRemoveFromCart.as_view(), name='remove_cart_item'),
     path('wishlist/', views.UserWishListView.as_view(), name='wish_list'),
     path('update_wishlist_items/<str:pk>/',views.UserUpdateWishListView.as_view(), name='update_wishlist_items'),
-
     path('checkout/',views.UserCheckout.as_view(), name='checkout'),
+    path('checkout/<str:pk>',views.UserCheckout.as_view(), name='checkout'),
+    path('applycoupon/<str:coupon_code>/',views.UserApplyCoupon.as_view(), name='applycoupon'),
 ]

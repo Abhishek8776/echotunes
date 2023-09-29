@@ -37,3 +37,9 @@
     max-height: 200px;
     overflow: scroll;
 }
+
+.hiddenscrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+

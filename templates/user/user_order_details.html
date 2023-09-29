@@ -1,0 +1,51 @@
+{% extends 'user/user_main_profile.html' %}
+{% block user_profile %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <div class="my-2 h5">Order Details</div>
+  <div class="row border w-100 rounded-3 mb-2">
+    <div class="col-2 p-2">
+      <a href="{% url 'user_product_details' item.product_variant.id %}">
+        <img src="{{ item.product_variant.cover_image.url }}" class="img-fluid bg-secondary-subtle border rounded-3" alt="product"/>
+      </a>
+    </div>
+
+    <div class="col-10 d-flex justify-content-between  px-2">
+      <div>
+        <div class="h6 text-secondary pt-3 small">Order ID : {{ item.id }}</div>
+
+        <div class=" d-flex justify-content-between">
+          <h4 class="fw-bold">{{ item.product_variant.product.brand }} {{ item.product_variant.product.name }}</h4>
+          {% comment %} <div>Status : <a class="text-success text-decoration-none fw-medium">On the way</a></div>     {% endcomment %}
+        </div>
+        <div><h6>{{ item.product_variant.product.description }}</h6></div>
+        <div>
+          <span class="fw-medium h4">₹{{ item.product_variant.selling_price }} </span>
+          <span class="fw-bold text-decoration-line-through text-secondary h5">₹{{ item.product_variant.actual_price }}</span>
+          <span class=" text-success fw-bold">{{ item.product_variant.discount_percentage }}% off</span>        
+        </div>
+      </div>
+      <div class="d-flex p-3">
+        <a class="btn btn-primary m-auto">
+          <i class="bi bi-download"></i> Download Invoice
+        </a>
+      </div>
+    </div>
+  </div>
+    <div class="mb-2 h5">Delivery Address</div>
+  <div class="row border w-100 rounded-3 py-2">
+    <div class="d-flex justify-content-between ">
+      <div class="text-bg-primary badge">
+        {% if item.order.address.address_type == 'Home' %} <i class="bi bi-house"></i>{% elif item.order.address.address_type == 'Office' %} <i class="bi bi-buildings"></i>{% endif %} {{ item.order.address.address_type }}
+      </div>
+    </div>
+    <div>{{ item.order.address.gender }}. {{ item.order.address.name }} - {{ item.order.address.mobile }}</div>
+    <div>{{ item.order.address.address }}</div>
+    <div>{{ item.order.address.place }} - {{ item.order.address.pincode }}</div>
+  </div>
+<script>
+  function printinvoice(){
+    alert('ok')
+    print()
+  }
+</script>
+{% endblock user_profile %}

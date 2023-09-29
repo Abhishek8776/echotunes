@@ -10,5 +10,5 @@ urlpatterns = [
     path('subcategory/', views.AdminSubCategory.as_view(),name='admin_sub_category'),
     path('product/', views.AdminProduct.as_view(), name='admin_product'),
     path('product/<str:pk>/', views.AdminProductVariants.as_view(),name='admin_product_variants'),
-
+    path('coupon/', views.AdminCoupons.as_view(), name='admin_coupons')
 ]

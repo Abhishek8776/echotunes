@@ -44,7 +44,7 @@
         <div>
           <span class="fw-medium h4">₹{{ item.product_variant.selling_price }} </span>
           <span class="fw-bold text-decoration-line-through text-secondary h5">₹{{ item.product_variant.actual_price }}</span>
-          <span class=" text-success fw-bold">{{ item.product_variant.discount_percentage }} % off</span>        
+          <span class=" text-success fw-bold">{{ item.product_variant.discount_percentage }}% off</span>        
         </div>
         <div class="d-flex align-items-center gap-2 pt-2">
           {% if item.count > 1 %}
@@ -66,17 +66,17 @@
       <div class="h5 ">PRICE DETAILS</div>
       <hr>
       <div class="row">
-        <div class="col h6 text-secondary">Price ({{ cart.total_count }} items)</div>
-        <div class="col h6 text-secondary">₹{{ cart.total_actual_price }}</div>
+        <div class="col h6 text-secondary">Price ({{ user_cart.total_count }} items)</div>
+        <div class="col h6 text-secondary">₹{{ user_cart.total_actual_price }}</div>
       </div>
       <div class="row">
         <div class="col h6 text-secondary">Discount</div>
-        <div class="col text-success h6">-₹{{ cart.total_discount_price }}</div>
+        <div class="col text-success h6">-₹{{ user_cart.total_discount_price }}</div>
       </div>
-      <div class="row">
+      {% comment %} <div class="row">
         <div class="col h6 text-secondary">Coupon Discount</div>
         <div class="col h6 text-secondary"><a href="" class="text-decoration-none">Apply Coupon</a></div>
-      </div>
+      </div> {% endcomment %}
       <div class="row">
         <div class="col h6 text-secondary">Delivery Charges</div>
         <div class="col h6 text-secondary text-success">FREE</div>
@@ -84,7 +84,7 @@
       <hr>
       <div class="row">
         <div class="col h6">Total Amount</div>
-        <div class="col h6">₹{{ cart.total_selling_price }}</div>
+        <div class="col h6">₹{{ user_cart.total_selling_price }}</div>
       </div>
       <hr>
       <div class="d-grid py-2">
