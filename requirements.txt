@@ -7,3 +7,5 @@ django-colorfield
 django-allauth
 razorpay
 schedule
+django-debug-toolbar
+# weasyprint

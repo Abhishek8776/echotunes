@@ -18,8 +18,25 @@ from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.views.generic import ListView
 from django.core.paginator import Paginator
-import razorpay 
+import razorpay,json
 from ECHOTUNES.settings import RAZORPAY_API_KEY,RAZORPAY_API_SECRET
+from django.http import HttpResponse
+from django.template.loader import get_template,render_to_string
+# import pdfkit
+from xhtml2pdf import pdf
+# from weasyprint import HTML
+from xhtml2pdf import pisa
+import os
+from django.core.serializers import serialize
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
+from django.db.models import F
+from django.forms.models import model_to_dict
+from django.db.models.functions import Cast
+from django.db.models import Value, CharField
+from io import BytesIO
+
+
 
 
 class UserSignup(View):
@@ -170,8 +187,9 @@ class UserHome(View):
     if session_cart := request.session.get('cart'):
       for item_data in session_cart.values():
         product_variant=Product_Variant.objects.get(id=item_data['product_variant_id'])
-        cart = Cart.objects.get_or_create(user=request.user)[0]
-        cart_item,cart_item_created = CartItem.objects.get_or_create(cart=cart,product_variant=product_variant)
+        # cart = Cart.objects.get_or_create(user=request.user)[0]
+        # cart_item,cart_item_created = CartItem.objects.get_or_create(cart=cart,product_variant=product_variant)
+        cart_item,cart_item_created = CartItem.objects.get_or_create(cart=request.user.cart,product_variant=product_variant)
         if not cart_item_created:
           cart_item.count += 1
           cart_item.save()
@@ -193,7 +211,7 @@ class UserProductDetails(View):
       variant.is_in_cart = CartItem.objects.filter(cart=request.user.cart,product_variant=variant).exists()
       for order in request.user.orders.all():
         for orderitem in order.order_items.all():
-          if variant.product == orderitem.product_variant.product:
+          if variant.product.id == orderitem.product_variant['product_id']:
             variant.is_ordered = True
             break
     else:
@@ -202,7 +220,7 @@ class UserProductDetails(View):
       except:
         variant.is_in_cart = False
     rating_data = {}
-    if  reviews := Review.objects.filter(product=variant.product):
+    if reviews := Review.objects.filter(product=variant.product):
       for rating_value in range(5,0,-1):
         rating_count = reviews.filter(rating=rating_value).count()
         rating_percentage = rating_count/len(reviews)*100 
@@ -228,10 +246,11 @@ class UserProductList(View):
     search_key = request.GET.get('search')
     page_number = request.GET.get('page')
 
-    if brand_items or discount_items or sort_option or min_limit or max_limit:
-      params=True
-    else:
-      params=False
+    # if brand_items or discount_items or sort_option or min_limit or max_limit:
+    #   params=True
+    # else:
+    #   params=False
+    params = bool(brand_items or discount_items or sort_option or min_limit or max_limit)
 
     if search_key:
       products = Product.objects.filter( Q(name__istartswith=search_key) | Q(brand__name__istartswith=search_key) | Q(sub_category__name__istartswith=search_key) )
@@ -294,6 +313,9 @@ class UserCart(View):
     if request.user.is_authenticated:
       user_cart = Cart.objects.get_or_create(user=request.user)[0]
       if cart_items := user_cart.cart_items.all().order_by('id'):
+        if out_of_stock_cart_item := user_cart.cart_items.filter(product_variant__stock=0):
+          out_of_stock_cart_item.delete()
+          return redirect('user_cart')
         return render(request, 'user/user_cart.html',{'cart_items':cart_items,'user_cart':user_cart})
       else:
         return render(request, 'user/user_empty_cart.html')
@@ -333,10 +355,7 @@ class UserAddToCart(View):
     if request.user.is_authenticated:
       product_variant=Product_Variant.objects.get(id=pk)
       cart = Cart.objects.get(user=request.user)
-      cart_item = CartItem.objects.get_or_create(cart=cart,product_variant=product_variant)[0]
-      # if not cart_item_created:
-      #   cart_item.count += 1
-      #   cart_item.save()
+      CartItem.objects.get_or_create(cart=cart,product_variant=product_variant)
     else:
       cart = request.session.get('cart', {})
       cart[pk] = {'count': 1, 'product_variant_id': pk}
@@ -485,15 +504,14 @@ class UserDeleteAddress(View):
 
 class UserOrderHistory(View):
   def get(self, request):
-    orders = Order.objects.filter(user=request.user)
-    all_order_items = []
-    for order in orders:
-      for item in order.order_items.all():
-        item.review = request.user.reviews.filter(product=item.product_variant.product).first()
-        print(item.review)
-        all_order_items.append(item)
-    print(all_order_items)
-    return render(request, 'user/user_order_history.html', {'all_order_items':all_order_items})
+    orders = request.user.orders.all()
+    # all_order_items = []
+    # for order in orders:
+      # for item in order.:
+        # print(order.order_items)
+        # item.review = request.user.reviews.filter(product=item.product_variant.product).first()
+        # all_order_items.append(item)
+    return render(request, 'user/user_order_history.html',{'orders':orders})
   
 
 
@@ -503,14 +521,23 @@ class UserOrderDetails(View):
     return render(request, 'user/user_order_details.html', {'item':item}) 
 
 
-client = razorpay.Client(auth=(RAZORPAY_API_KEY,RAZORPAY_API_SECRET))
 class UserCheckout(LoginRequiredMixin,View):
   def get(self, request, pk=None):
+    cart = Cart.objects.get(user=request.user)
+    cart.coupon_discount = request.session.get('coupon_discount', 0)
+    if cart.total_selling_price > cart.coupon_discount:
+      cart.final_price = cart.total_selling_price - cart.coupon_discount
+    else:
+      cart.coupon_discount = 0
+      cart.final_price = cart.total_selling_price
+    cart.save()
+    try:
+      del request.session['coupon_discount']
+    except:
+      pass     
     coupons = Coupon.objects.all()
     coupons = [coupon for coupon in coupons if coupon.status == 'Active']
-
     addresses = request.user.user_addresses.all()
-    cart = Cart.objects.get(user=request.user)
     if pk:
       product_variant=Product_Variant.objects.get(id=pk)
       cart_items = [CartItem.objects.get_or_create(cart=cart, product_variant=product_variant)[0]]
@@ -518,30 +545,62 @@ class UserCheckout(LoginRequiredMixin,View):
       cart_items = cart.cart_items.all().order_by('id')
     if not cart_items:
         return redirect('user_cart')
-    payment_order = client.order.create(dict(amount = request.user.cart.final_price*100, currency = "INR", payment_capture = 1))
+    client = razorpay.Client(auth=(RAZORPAY_API_KEY,RAZORPAY_API_SECRET))
+    payment_order = client.order.create(dict(amount = cart.final_price*100, currency = "INR", payment_capture = 1))
     payment_order_id = payment_order['id']
     return render(request, 'user/user_checkout.html', {'addresses':addresses, 'cart':cart, 'cart_items':cart_items,'coupons':coupons, 'payment_api_key':RAZORPAY_API_KEY,'order_id':payment_order_id})  
-
+   
   def post(self, request, pk=None):
     cart = request.user.cart
     address_id=request.POST.get('address')
     payment_method = request.POST.get('payment_method')
-    address = UserAddress.objects.get(id=address_id)
-    order = Order.objects.create(user=request.user, address=address, payment_method=payment_method, total_count=cart.total_count, total_discount_price=cart.total_discount_price, coupon_discount=cart.coupon_discount, total_actual_price=cart.total_actual_price, total_selling_price=cart.total_selling_price, final_price=cart.final_price)
-    for item in request.user.cart.cart_items.all():
-      product_variant = item.product_variant    
-      OrderItem.objects.create(order=order, product_variant=product_variant)
-    if payment_method == 'online':
-      # client = razorpay.Client(auth=(RAZORPAY_API_KEY,RAZORPAY_API_SECRET))
-      # data = { "amount": request.user.cart.final_price*100, "currency": "INR", payment_capture=1}
-      # payment_order = client.order.create(dict(amount = request.user.cart.final_price*100, currency = "INR", payment_capture =1))
-      # order_id = payment["id"] 
-      # order.razorpay_order_id = order_id
-      order.status = 'success'
-      order.save()
-    elif payment_method == 'cod':
-      order.status = 'success'
-      order.save()
+    address_data = UserAddress.objects.values('name', 'gender', 'mobile', 'email', 'address_type','place', 'address', 'landmark', 'pincode', 'post','district', 'state').get(id=address_id)
+    # address_data2 = UserAddress.objects.values().get(id=address_id)
+    # print(address_data1)
+    # print(address_data2)
+    # cart_items = []
+    # for item in cart.cart_items.all():
+    #   item_dict = {
+    #     'id':str(item.product_variant.id),
+    #     'brand': item.product_variant.product.brand.name,
+    #     'product_name':item.product_variant.product.name,
+    #     'color':item.product_variant.color_name,
+    #     'count':item.count,
+    #     'selling_price':item.total_selling_price,
+    #     'actual_price':item.total_actual_price,
+    #   }
+    #   cart_items.append(item_dict)
+    # order_items = list(cart.cart_items.annotate(
+    #   variant_id=Cast('product_variant__id', CharField()), brand_name = F('product_variant__product__brand__name'), product_name = F('product_variant__product__name'), color = F('product_variant__color_name')).values('variant_id','brand_name', 'product_name','color','count','count','total_selling_price','total_actual_price'))
+    # print(order_items)
+    # order_items = list(cart.cart_items.annotate(variant_id = F('product_variant__id'), product_name = F('product_variant__product__name'), brand = F('product_variant__product__brand__name'),color=F('product_variant__color_name')).values('count', 'total_actual_price', 'brand', 'total_selling_price','variant_id', 'product_name', 'color'))
+    # for item in order_items:
+    #   product_variant = Product_Variant.objects.get(id=str(item['variant_id']))
+    #   product_variant.stock -= item['count']
+    #   product_variant.save()
+    # Order.objects.create(user=request.user, address=address_data, payment_method=payment_method, total_count=cart.total_count, total_discount_price=cart.total_discount_price, coupon_discount=cart.coupon_discount, total_actual_price=cart.total_actual_price, total_selling_price=cart.total_selling_price, final_price=cart.final_price,order_items=order_items)  
+    
+    
+
+    order = Order.objects.create(user=request.user, address=address_data, payment_method=payment_method, total_count=cart.total_count, total_discount_price=cart.total_discount_price, coupon_discount=cart.coupon_discount, total_actual_price=cart.total_actual_price, total_selling_price=cart.total_selling_price, final_price=cart.final_price)    
+
+    for item in cart.cart_items.all():
+      id=str(item.product_variant.id)
+      product = item.product_variant.product
+      # product = model_to_dict(item.product_variant.product)
+      # print(product)
+      product_variant = Product_Variant.objects.values().get(id=id)
+      product_variant['id'] = str(id)
+      product_variant['cover_image'] = '/media/'+ product_variant['cover_image'] 
+      product_variant['product_id'] = str(product.id)
+      product_variant['brand'] = product.brand.name
+      product_variant['product_name'] = product.name
+      product_variant['product_description'] = product.description
+
+      OrderItem.objects.create(order=order, count=item.count, total_actual_price=item.total_actual_price , total_selling_price=item.total_selling_price, product_variant=product_variant)
+      print(product_variant)
+
+    return redirect(request.META.get('HTTP_REFERER'))
     return redirect('user_home')
   
 
@@ -562,18 +621,20 @@ class UserReview(View):
 
 class UserApplyCoupon(View):
   def get(self, request, coupon_code):
-    cart = request.user.cart
     if coupon := Coupon.objects.filter(code=coupon_code).first():
-      if cart.total_selling_price > coupon.discount:
-        cart.coupon_discount = coupon.discount
-        cart.final_price = cart.total_selling_price - coupon.discount
-        cart.save()
-      else: 
-        cart.coupon_discount = 0
-        cart.final_price = cart.total_selling_price
-        cart.save() 
-    else:
-      cart.coupon_discount = 0
-      cart.final_price = cart.total_selling_price 
-      cart.save()
+      request.session['coupon_discount'] = coupon.discount  
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+class UserInvoice(View):
+  def get(self, request, pk):
+    template_name = 'user/invoice.html'
+    order = request.user.orders.get(id=pk)
+    context = {'order':order}
+    html_content = render_to_string(template_name, context)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="invoice.pdf.pdf"'
+    pisa_status = pisa.CreatePDF(html_content, dest=response,encoding='utf-8')
+    if pisa_status:
+      return response
+    return None

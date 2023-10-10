@@ -1,0 +1,36 @@
+{% extends 'superuser/admin_index.html' %}
+{% block admin_index %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>product</th>
+        <th>Variant</th>
+        <th>Count</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order_item in order_items %}
+        <tr>
+          <th>{{ forloop.counter }}</th>
+          <td>{{ order_item.id }}</td>
+          <td>{{ order_item.product_variant.product.brand.name }} {{ order_item.product_variant.product.name }}</td>
+          <td>{{ order_item.product_variant.color_name }}</td>
+          <td>{{ order_item.count }}</td>
+          <td>{{ order_item.status }}</td>
+          <td>
+            {% if order_item.status == 'On the way' or order_item.status == 'Cancel' %}
+            <a href="{% url "admin_update_order_status" 'Cancel' order_item.id %}" class="btn btn-danger">Cancel</a>
+            <a href="{% url "admin_update_order_status" 'Deliver' order_item.id %}" class="btn btn-success">Deliver</a>
+            {% else %}
+            Done
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

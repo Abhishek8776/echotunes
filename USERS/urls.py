@@ -20,7 +20,7 @@ urlpatterns = [
     path('update_address/<str:pk>/', views.UserUpdateAddress.as_view(), name='update_address'),
     path('delete_address/<str:pk>/', views.UserDeleteAddress.as_view(), name='delete_address'),
     path('order_history/', views.UserOrderHistory.as_view(), name="order_history"),
-    path('order_history/<str:pk>/', views.UserOrderDetails.as_view(), name='order_details'),
+    path('order_details/<str:pk>/', views.UserOrderDetails.as_view(), name='order_details'),
     path('review/<str:pk>/', views.UserReview.as_view(), name='add_or_update_review'),
 
     path('cart/', views.UserCart.as_view(), name='user_cart'),
@@ -33,4 +33,5 @@ urlpatterns = [
     path('checkout/',views.UserCheckout.as_view(), name='checkout'),
     path('checkout/<str:pk>',views.UserCheckout.as_view(), name='checkout'),
     path('applycoupon/<str:coupon_code>/',views.UserApplyCoupon.as_view(), name='applycoupon'),
+    path('invoice/<str:pk>', views.UserInvoice.as_view(), name='invoice')
 ]

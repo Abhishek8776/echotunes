@@ -1,0 +1,27 @@
+{% extends 'superuser/admin_index.html' %}
+{% block admin_index %}
+  <table class="table table-bordered p" id="colors">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>User</th>
+        <th>Address</th>
+        <th>Updated At</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+        <tr>
+          <th>{{ forloop.counter }}</th>
+          <td><a href="{% url "admin_order_details" pk=order.id %}">{{ order.id }}</a></td>
+          <td>{{ order.user.name }}</td>
+          <td>{{ order.address.place }}</td>
+          <td>{{ order.updated_at }}</td>
+          <td>{{ order.created_at }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -7,7 +7,8 @@ from colorfield.fields import ColorField
 from django.db.models import Avg
 import uuid
 from datetime import date
-
+from django.db.models.signals import *
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -82,6 +83,11 @@ class Product_Variant(models.Model):
     self.discount_percentage = round((((actual_price - selling_price) / actual_price) * 100))
     super(Product_Variant, self).save(*args, **kwargs)
 
+@receiver(pre_save, sender=Product_Variant)
+def remove_out_of_stock_from_cart_items(sender, instance, **kwargs):
+  if out_of_stock_items := instance.cart_items.all().filter(count=0):
+    out_of_stock_items.delete()
+    print('out of stock products deleted')    
 
 
 class ProductVarientImage(models.Model):

@@ -224,3 +224,36 @@ class AdminCoupons(View):
     # except ValidationError as e:
     #   error_message = str(e)
     # return redirect(reverse('admin_coupons') + f'?error_message={error_message}')
+
+
+
+class AdminOrder(View):
+
+  def get(self, request):
+    orders = Order.objects.all()
+    return render(request, 'superuser/admin_orders.html', {'orders':orders})
+  
+
+class AdminOrderDetails(View):
+
+  def get(self, request, pk):
+    order = Order.objects.get(id=pk)
+    order_items = order.order_items.all().order_by('id')
+    return render(request, 'superuser/admin_order_details.html',{'order_items':order_items})
+  
+class AdminUpdateOrderStatus(View):
+  def get(self, request, action, pk):
+    orderitem = OrderItem.objects.get(id=pk)
+    if action == 'Deliver':
+      orderitem.status = 'Deliverd'
+    elif action == 'Cancel':
+      orderitem.status = 'Cancelled'
+    orderitem.save()
+    return redirect(request.META.get('HTTP_REFERER'))
+  
+# class CancelOrder(View):
+#   def get(self, request, pk):
+#     orderitem = OrderItem.objects.get(id=pk)
+#     orderitem.status = 'Cancelled'
+#     orderitem.save()
+#     return redirect(request.META.get('HTTP_REFERER'))

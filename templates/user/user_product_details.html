@@ -56,27 +56,34 @@
       </div>
       
 
-
-      <div class="h5 pt-4">Check Delivery</div>
-      <div class="col-10">
-        <input type="text" name="pincode" id="addpincode" class="form-control mb-2" onkeyup="fetchPincodeData(this, 'addpinhelp')" aria-describedby="addpinhelp" placeholder="Enter Pincode" required>
-        <div id="addpinhelp" class="form-text text-danger"></div>
-      </div>
-
-      <div class="d-flex gap-2 col-10 py-3"> 
-        {% if variant.is_in_cart  %} 
-        <a href="{% url 'user_cart' %}" class="btn btn-primary border-0  py-2 col" role="button">
-            <i class="bi bi-cart3"></i> GO TO CART
-          </a>
+      {% if variant.stock > 0 %}
+        {% if variant.stock > 10 %}
+        <div class="text-success h6 pt-2">In Stock</div>
         {% else %}
-          <a href="{% url 'user_add_to_cart' pk=variant.id %}" class="btn btn-primary border-0  py-2 col" role="button">
-            <i class="bi bi-cart3"></i> ADD TO CART
-          </a>
+        <div class="text-danger h6 pt-2">Only few left</div>
         {% endif %}
-        <a href="{% url 'checkout' pk=variant.id %}" class="btn btn-primary border-0  py-2 col" role="button">
-          <i class="bi bi-lightning"></i>BUY NOW
-        </a>
-      </div>
+        <div class="h5 pt-2">Check Delivery</div>
+        <div class="col-10">
+          <input type="text" name="pincode" id="addpincode" class="form-control mb-2" onkeyup="fetchPincodeData(this, 'addpinhelp')" aria-describedby="addpinhelp" placeholder="Enter Pincode" required>
+          <div id="addpinhelp" class="form-text text-danger"></div>
+        </div>
+        <div class="d-flex gap-2 col-10 py-3"> 
+          {% if variant.is_in_cart  %} 
+            <a href="{% url 'user_cart' %}" class="btn btn-primary border-0  py-2 col" role="button">
+              <i class="bi bi-cart3"></i> GO TO CART
+            </a>
+          {% else %}
+            <a href="{% url 'user_add_to_cart' pk=variant.id %}" class="btn btn-primary border-0  py-2 col" role="button">
+              <i class="bi bi-cart3"></i> ADD TO CART
+            </a>
+          {% endif %}
+          <a href="{% url 'checkout' pk=variant.id %}" class="btn btn-primary border-0  py-2 col" role="button">
+            <i class="bi bi-lightning"></i>BUY NOW
+          </a> 
+        </div>
+        {% else %}
+            <button class="fw-medium btn btn-secondary mt-5 w-100" style="cursor: not-allowed;">SOLD OUT</button>
+        {% endif %}
     </div>
     <div class="col-12">
       <div class="d-flex justify-content-between mb-2">

@@ -78,17 +78,29 @@ def calculate_cart_item_totals(sender, instance, **kwargs):
   instance.total_selling_price = instance.count * instance.product_variant.selling_price
   instance.total_actual_price = instance.count * instance.product_variant.actual_price
 
+
+@receiver(pre_save, sender=CartItem)
+def out_of_stock_cart_items(sender, instance, **kwargs):
+  # if instance.product_variant.stock == 0:
+  #   instance.delete()
+  if instance.count>10:
+    instance.count = 10
+    print('you have reached limit')
+  elif instance.count > instance.product_variant.stock:
+    instance.count = instance.product_variant.stock
+    print(f'only {instance.product_variant.stock} products available')
+
+
+
 @receiver([post_save, post_delete], sender=CartItem)
 def calculate_cart_totals(sender, instance, **kwargs):
-    cart = instance.cart
-    cart_items = cart.cart_items.all()
-    cart.total_count = cart_items.aggregate(Sum('count'))['count__sum'] or 0
-    cart.total_selling_price = cart_items.aggregate(Sum('total_selling_price'))['total_selling_price__sum'] or 0
-    cart.total_actual_price = cart_items.aggregate(Sum('total_actual_price'))['total_actual_price__sum'] or 0
-    cart.total_discount_price = cart.total_actual_price - cart.total_selling_price
-    cart.coupon_discount = 0
-    cart.final_price = cart.total_selling_price
-    cart.save()
+  cart = instance.cart
+  cart_items = cart.cart_items.all()
+  cart.total_count = cart_items.aggregate(Sum('count'))['count__sum'] or 0
+  cart.total_selling_price = cart_items.aggregate(Sum('total_selling_price'))['total_selling_price__sum'] or 0
+  cart.total_actual_price = cart_items.aggregate(Sum('total_actual_price'))['total_actual_price__sum'] or 0
+  cart.total_discount_price = cart.total_actual_price - cart.total_selling_price
+  cart.save()
 
 
 
@@ -107,8 +119,7 @@ class WishListItem(models.Model):
 
 class Order(BaseModel):
   user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-  address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='orders')
-  status = models.CharField(max_length=30, default='failed')
+  address = models.JSONField(null=True)
   payment_method = models.CharField(max_length=50)
   total_count = models.PositiveIntegerField(default=0)
   total_discount_price = models.IntegerField(default=0)
@@ -116,12 +127,16 @@ class Order(BaseModel):
   total_actual_price = models.IntegerField(default=0) 
   total_selling_price = models.IntegerField(default=0)
   final_price = models.IntegerField(default=0)
+  # order_items = models.JSONField(null=True)
+# address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='orders')
 
 
-class OrderItem(models.Model):
+class OrderItem(BaseModel):
   id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
   order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
-  product_variant = models.ForeignKey(Product_Variant, on_delete=models.CASCADE, related_name='order_items')
+#   product_variant = models.ForeignKey(Product_Variant, on_delete=models.CASCADE, related_name='order_items')
+  product_variant = models.JSONField()
+  status = models.CharField(max_length=30, default='On the Way')
   count = models.PositiveIntegerField(default=1)
   total_actual_price = models.IntegerField(default=0)
   total_selling_price = models.IntegerField(default=0)

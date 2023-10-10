@@ -10,5 +10,9 @@ urlpatterns = [
     path('subcategory/', views.AdminSubCategory.as_view(),name='admin_sub_category'),
     path('product/', views.AdminProduct.as_view(), name='admin_product'),
     path('product/<str:pk>/', views.AdminProductVariants.as_view(),name='admin_product_variants'),
-    path('coupon/', views.AdminCoupons.as_view(), name='admin_coupons')
+    path('coupon/', views.AdminCoupons.as_view(), name='admin_coupons'),
+    path('orders/', views.AdminOrder.as_view(), name='admin_orders'),
+    path('order_details/<str:pk>/', views.AdminOrderDetails.as_view(), name='admin_order_details'),
+    path('update_order_status/<str:action>/<str:pk>/', views.AdminUpdateOrderStatus.as_view(), name='admin_update_order_status'),
+    # path('deliver_order/<str:pk>/', views.DeliverOrder.as_view(), name='admin_deliver_order'),
 ]

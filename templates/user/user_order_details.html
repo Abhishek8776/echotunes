@@ -5,7 +5,7 @@
   <div class="row border w-100 rounded-3 mb-2">
     <div class="col-2 p-2">
       <a href="{% url 'user_product_details' item.product_variant.id %}">
-        <img src="{{ item.product_variant.cover_image.url }}" class="img-fluid bg-secondary-subtle border rounded-3" alt="product"/>
+        <img src="{{ item.product_variant.cover_image }}" class="img-fluid bg-secondary-subtle border rounded-3" alt="product"/>
       </a>
     </div>
 
@@ -14,10 +14,10 @@
         <div class="h6 text-secondary pt-3 small">Order ID : {{ item.id }}</div>
 
         <div class=" d-flex justify-content-between">
-          <h4 class="fw-bold">{{ item.product_variant.product.brand }} {{ item.product_variant.product.name }}</h4>
+          <h4 class="fw-bold">{{ item.product_variant.brand }} {{ item.product_variant.product_name }}</h4>
           {% comment %} <div>Status : <a class="text-success text-decoration-none fw-medium">On the way</a></div>     {% endcomment %}
         </div>
-        <div><h6>{{ item.product_variant.product.description }}</h6></div>
+        <div><h6>{{ item.product_variant.product_description }}</h6></div>
         <div>
           <span class="fw-medium h4">₹{{ item.product_variant.selling_price }} </span>
           <span class="fw-bold text-decoration-line-through text-secondary h5">₹{{ item.product_variant.actual_price }}</span>
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="d-flex p-3">
-        <a class="btn btn-primary m-auto">
+        <a class="btn btn-primary m-auto" href="{% url "invoice" item.order.id %}">
           <i class="bi bi-download"></i> Download Invoice
         </a>
       </div>
