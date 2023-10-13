@@ -27,16 +27,17 @@ class AdminSignIn(View):
     print(email,password)
     superuserobj = User.objects.filter(email=email, is_superuser=True).first()
     if not superuserobj:
-      messages.warning(request, 'Account not fount')
+      messages.error(request, 'Account not fount')
       return redirect('admin_signin')
     superuser = authenticate(request, email=email,password=password)
     print(superuser)
     if not superuser:
-      messages.warning(request , 'Email password mismatch')
+      messages.error(request , 'Email password mismatch')
       return redirect('admin_signin')
     
     login(request, superuser)
     request.session['usr_id'] = str(superuser.id)
+    messages.success(request, 'Sign In Successfull')
     return redirect('admin_dashboard')
 
   
@@ -112,6 +113,7 @@ class AdminBanner(View):
     img = request.FILES.get('bannerimg')
     print(img)
     Banner.objects.create(image=img)
+    messages.success(request, 'Banner Created')
     return redirect('admin_banner')
   
 
@@ -125,6 +127,7 @@ class AdminBrand(View):
     brand = request.POST.get('brand')
     logo = request.FILES.get('logo')
     Brand.objects.create(name=brand,logo=logo)
+    messages.success(request, 'Brand Created')
     return redirect('admin_brand')
 
 
@@ -137,6 +140,7 @@ class AdminCategory(View):
   def post(self, request):
     category = request.POST.get('category')
     Category.objects.create(name=category)
+    messages.success(request, 'Category Created')
     return redirect('admin_category')
   
 
@@ -153,6 +157,7 @@ class AdminSubCategory(View):
     category_id = request.POST.get('category')
     category = Category.objects.get(id=category_id)
     Sub_Category.objects.create(name=sub_category_name,image=image,category=category)
+    messages.success(request, 'Sub Category Created')
     return redirect('admin_sub_category')
   
 
@@ -176,6 +181,7 @@ class AdminProduct(View):
     category_id = sub_category.category_id
     category = Category.objects.get(id=category_id)
     Product.objects.create(name=product_name, category=category, sub_category=sub_category, brand=brand, description=description, visibility=visibility)
+    messages.success(request, 'Product Created')
     return redirect('admin_product')
   
 
@@ -199,6 +205,7 @@ class AdminProductVariants(View):
     product_variant = Product_Variant.objects.create(color_name=color_name,color=color_code,actual_price=actual_price,       selling_price=selling_price,stock=stock,cover_image=cover_image,product=product)
     for image in images:
       ProductVarientImage.objects.create(image=image,product_variant=product_variant)
+    messages.success(request, 'Product Variant Created')
     return redirect('admin_product_variants',pk=pk)
   
 
@@ -217,13 +224,8 @@ class AdminCoupons(View):
     start_date = request.POST.get('start_date')
     end_date = request.POST.get('end_date')
     Coupon.objects.create(code=code, count=count, discount=discount, minimum_amount=minimum_amount,start_date=start_date, end_date=end_date)
+    messages.success(request, 'Coupon Created')
     return redirect('admin_coupons')
-    # error_message = None
-    # try:
-    #   Coupon.objects.create(code=code, count=count, discount=discount, minimum_amount=minimum_amount,start_date=start_date, end_date=end_date)
-    # except ValidationError as e:
-    #   error_message = str(e)
-    # return redirect(reverse('admin_coupons') + f'?error_message={error_message}')
 
 
 
@@ -248,12 +250,19 @@ class AdminUpdateOrderStatus(View):
       orderitem.status = 'Deliverd'
     elif action == 'Cancel':
       orderitem.status = 'Cancelled'
+    messages.success(request, f'Order status changed to {orderitem.status}')
     orderitem.save()
     return redirect(request.META.get('HTTP_REFERER'))
   
-# class CancelOrder(View):
-#   def get(self, request, pk):
-#     orderitem = OrderItem.objects.get(id=pk)
-#     orderitem.status = 'Cancelled'
-#     orderitem.save()
-#     return redirect(request.META.get('HTTP_REFERER'))
+
+class AdminUser(View):
+  def get(self, request):
+    users = User.objects.filter(is_superuser = False).order_by('-date_joined')
+    return render(request, 'superuser/admin_user.html', {'users':users})
+
+class AdminUpdateUserAccess(View):
+  def get(self, request, pk):
+    user = User.objects.get(id=pk)
+    user.is_active = not(user.is_active)
+    user.save()
+    return redirect('admin_user')

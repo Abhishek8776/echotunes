@@ -36,7 +36,7 @@
       <div class="col-9  p-2">
         <div class="pt-2 d-flex justify-content-between">
           <h4 class="fw-bold">{{ item.product_variant.product.brand }} {{ item.product_variant.product.name }}</h4>
-          <a class="h4 text-danger" href="{% url 'remove_cart_item' item.product_variant.id %}"><i class="bi bi-trash"></i></a>        
+          <a class="h4 text-danger" onclick="confirmDelete(this);" href="{% url 'remove_cart_item' item.product_variant.id %}"  data-confirm-message="Do you want to remove this product from your cart?"><i class="bi bi-trash"></i></a>
         </div>
         <div>
           <h6 class="text-secondary">{{ item.product_variant.product.description }}</h6>
@@ -73,10 +73,6 @@
         <div class="col h6 text-secondary">Discount</div>
         <div class="col text-success h6">-₹{{ user_cart.total_discount_price }}</div>
       </div>
-      {% comment %} <div class="row">
-        <div class="col h6 text-secondary">Coupon Discount</div>
-        <div class="col h6 text-secondary"><a href="" class="text-decoration-none">Apply Coupon</a></div>
-      </div> {% endcomment %}
       <div class="row">
         <div class="col h6 text-secondary">Delivery Charges</div>
         <div class="col h6 text-secondary text-success">FREE</div>
@@ -95,4 +91,8 @@
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/deleteconfirmation.js' %}"></script>
+
 {% endblock user_index %}
+

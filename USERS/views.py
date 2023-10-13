@@ -18,7 +18,7 @@ from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.views.generic import ListView
 from django.core.paginator import Paginator
-import razorpay,json
+import razorpay,json,time
 from ECHOTUNES.settings import RAZORPAY_API_KEY,RAZORPAY_API_SECRET
 from django.http import HttpResponse
 from django.template.loader import get_template,render_to_string
@@ -50,7 +50,7 @@ class UserSignup(View):
     password = request.POST.get('pass')
     userobj = User.objects.filter(email=email).first()
     if userobj:
-      messages.warning(request, 'You are already registered, Please sign in')
+      messages.error(request, 'You are already registered, Please sign in')
       return redirect('user_signin')
     otp = str(random.randint(100000, 999999))
     account_verification_email(email, name, otp)
@@ -72,7 +72,7 @@ class UserVerifyOTP(View):
     reciveotp = request.POST.get('otp1') + request.POST.get('otp2') + request.POST.get('otp3') + request.POST.get('otp4') + request.POST.get('otp5') + request.POST.get('otp6')
     signup_data = cache.get(key)
     if not signup_data:
-        messages.warning(request, 'OTP expired or invalid')
+        messages.error(request, 'OTP expired or invalid')
         return redirect('user_signin')
     otp = signup_data.get('otp')
     name = signup_data.get('name')
@@ -80,7 +80,7 @@ class UserVerifyOTP(View):
     password = signup_data.get('password')
     print(reciveotp, otp)
     if reciveotp != otp:
-        messages.warning(request, 'OTP mismatch')
+        messages.error(request, 'OTP mismatch')
         return redirect('user_verify_otp', key=key)
     user = User.objects.create_user(name=name, email=email, password=password)
     user.save()
@@ -116,14 +116,15 @@ class UserSignIn(View):
     print(email, password)
     userobj = User.objects.filter(email=email).first()
     if not userobj:
-      messages.warning(request, 'You are not registered, Please sign up')
+      messages.error(request, 'You are not registered, Please sign up')
       return redirect('user_signup')
     user = authenticate(request, email=email, password=password)
     if not user:
-      messages.warning(request, 'Email password mismatch')
+      messages.error(request, 'Email password mismatch')
       return redirect('user_signin')
     login(request, user)
     request.session['usr_id'] = str(user.id)
+    messages.success(request, 'Sign in Successful')
     return redirect('user_home')
 
 
@@ -138,7 +139,7 @@ class UserForgotPassword(View):
     try:
       user = User.objects.get(email=email)
     except:
-      messages.warning(request, 'You are not registerd, Please sign up')
+      messages.error(request, 'You are not registerd, Please sign up')
       return redirect('user_signup')
     encrypt_id = urlsafe_base64_encode(str(user.pk).encode())
     reset_link = f"{request.scheme}://{request.get_host()}{reverse('user_reset', args=[encrypt_id])}"
@@ -187,8 +188,6 @@ class UserHome(View):
     if session_cart := request.session.get('cart'):
       for item_data in session_cart.values():
         product_variant=Product_Variant.objects.get(id=item_data['product_variant_id'])
-        # cart = Cart.objects.get_or_create(user=request.user)[0]
-        # cart_item,cart_item_created = CartItem.objects.get_or_create(cart=cart,product_variant=product_variant)
         cart_item,cart_item_created = CartItem.objects.get_or_create(cart=request.user.cart,product_variant=product_variant)
         if not cart_item_created:
           cart_item.count += 1
@@ -211,7 +210,7 @@ class UserProductDetails(View):
       variant.is_in_cart = CartItem.objects.filter(cart=request.user.cart,product_variant=variant).exists()
       for order in request.user.orders.all():
         for orderitem in order.order_items.all():
-          if variant.product.id == orderitem.product_variant['product_id']:
+          if str(variant.product.id) == orderitem.product_variant['product_id']:
             variant.is_ordered = True
             break
     else:
@@ -226,7 +225,6 @@ class UserProductDetails(View):
         rating_percentage = rating_count/len(reviews)*100 
         rating_data[rating_value] = {'count':rating_count,'percentage':rating_percentage}
       reviews.current_user_review = reviews.filter(user=request.user).first() if request.user.is_authenticated else None
-      print(variant.is_in_cart)
     return render(request, 'user/user_product_details.html', {'variant': variant, 'reviews':reviews , 'rating_data':rating_data})
   
 
@@ -246,10 +244,6 @@ class UserProductList(View):
     search_key = request.GET.get('search')
     page_number = request.GET.get('page')
 
-    # if brand_items or discount_items or sort_option or min_limit or max_limit:
-    #   params=True
-    # else:
-    #   params=False
     params = bool(brand_items or discount_items or sort_option or min_limit or max_limit)
 
     if search_key:
@@ -360,17 +354,29 @@ class UserAddToCart(View):
       cart = request.session.get('cart', {})
       cart[pk] = {'count': 1, 'product_variant_id': pk}
       request.session['cart'] = cart
+    messages.success(request, 'Item Added to Cart')
     return redirect('user_product_details',pk=pk)
   
 
 
 class AddCartItemCount(View):
-
+  # if instance.count>10:
+  #   instance.count = 10
+  #   print('you have reached limit')
+  # elif instance.count > instance.product_variant.stock:
+  #   instance.count = instance.product_variant.stock
+  #   print(f'only {instance.product_variant.stock} products available')
   def get(self, request, pk):
     if request.user.is_authenticated:
       cart_item = CartItem.objects.get(product_variant_id=pk)
-      cart_item.count += 1
-      cart_item.save()
+      if cart_item.count >= 10:
+        messages.error(request, 'Your have reached Maximum Limit')
+      elif cart_item.count > (stock := cart_item.product_variant.stock):
+        messages.error(request, f'only {stock} products available')
+      else:
+        cart_item.count += 1
+        messages.success(request, 'Item Count Incremented')
+        cart_item.save()
     else:
       cart = request.session.get('cart', {})
       cart_item = cart.get(pk)
@@ -392,6 +398,7 @@ class SubtractCartItemCount(View):
       cart_item = cart.get(pk)
       cart_item['count'] -= 1
       request.session['cart'] = cart
+    messages.error(request, 'Item Count Decremented')
     return redirect(request.META.get('HTTP_REFERER'))
   
 
@@ -435,8 +442,11 @@ class UserUpdateWishListView(LoginRequiredMixin, View):
     wishlist = WishList.objects.get_or_create(user=request.user)[0]
     product=Product.objects.get(id=pk)
     wishlist_item,wishlist_item_created = WishListItem.objects.get_or_create(wishlist=wishlist,product=product)
-    if not wishlist_item_created:
+    if wishlist_item_created:
+      messages.success(request, 'Product Added to Wishlist')
+    else:
       wishlist_item.delete()
+      messages.error(request, 'Product Removed from Wishlist')
     return redirect(request.META.get('HTTP_REFERER'))
   
 
@@ -472,6 +482,7 @@ class UserAddAddress(View):
     district = request.POST.get('district')
     state = request.POST.get('state')
     UserAddress.objects.create(user=request.user,address_type=address_type, name=name, gender=gender, mobile=mobile, email=email,address=address, place=place, landmark=landmark, pincode=pincode, post=post, district=district, state=state)
+    messages.success(request, 'Address added successfully')
     return redirect(request.META.get('HTTP_REFERER'))
   
 
@@ -489,6 +500,7 @@ class UserUpdateAddress(View):
     user_address.pincode = request.POST.get('pincode')
     user_address.landmark = request.POST.get('landmark')
     user_address.save()
+    messages.success(request, 'Address Updated')
     return redirect('manage_address')
   
 
@@ -498,6 +510,7 @@ class UserDeleteAddress(View):
   def get(self, request, pk):
     useraddress = UserAddress.objects.get(id=pk)
     useraddress.delete()
+    messages.error(request, 'Address deleted')
     return redirect('manage_address')
   
 
@@ -505,13 +518,14 @@ class UserDeleteAddress(View):
 class UserOrderHistory(View):
   def get(self, request):
     orders = request.user.orders.all()
-    # all_order_items = []
-    # for order in orders:
-      # for item in order.:
+    all_order_items = []
+    for order in orders:
+      for item in order.order_items.all():
         # print(order.order_items)
-        # item.review = request.user.reviews.filter(product=item.product_variant.product).first()
-        # all_order_items.append(item)
-    return render(request, 'user/user_order_history.html',{'orders':orders})
+        product = Product.objects.get(id = item.product_variant['product_id'])
+        item.review = request.user.reviews.filter(product=product).first()
+        all_order_items.append(item)
+    return render(request, 'user/user_order_history.html',{'all_order_items':all_order_items})
   
 
 
@@ -535,8 +549,8 @@ class UserCheckout(LoginRequiredMixin,View):
       del request.session['coupon_discount']
     except:
       pass     
-    coupons = Coupon.objects.all()
-    coupons = [coupon for coupon in coupons if coupon.status == 'Active']
+    coupons = Coupon.objects.filter(status = 'Active')
+    # coupons = [coupon for coupon in coupons if coupon.status == 'Active']
     addresses = request.user.user_addresses.all()
     if pk:
       product_variant=Product_Variant.objects.get(id=pk)
@@ -555,32 +569,6 @@ class UserCheckout(LoginRequiredMixin,View):
     address_id=request.POST.get('address')
     payment_method = request.POST.get('payment_method')
     address_data = UserAddress.objects.values('name', 'gender', 'mobile', 'email', 'address_type','place', 'address', 'landmark', 'pincode', 'post','district', 'state').get(id=address_id)
-    # address_data2 = UserAddress.objects.values().get(id=address_id)
-    # print(address_data1)
-    # print(address_data2)
-    # cart_items = []
-    # for item in cart.cart_items.all():
-    #   item_dict = {
-    #     'id':str(item.product_variant.id),
-    #     'brand': item.product_variant.product.brand.name,
-    #     'product_name':item.product_variant.product.name,
-    #     'color':item.product_variant.color_name,
-    #     'count':item.count,
-    #     'selling_price':item.total_selling_price,
-    #     'actual_price':item.total_actual_price,
-    #   }
-    #   cart_items.append(item_dict)
-    # order_items = list(cart.cart_items.annotate(
-    #   variant_id=Cast('product_variant__id', CharField()), brand_name = F('product_variant__product__brand__name'), product_name = F('product_variant__product__name'), color = F('product_variant__color_name')).values('variant_id','brand_name', 'product_name','color','count','count','total_selling_price','total_actual_price'))
-    # print(order_items)
-    # order_items = list(cart.cart_items.annotate(variant_id = F('product_variant__id'), product_name = F('product_variant__product__name'), brand = F('product_variant__product__brand__name'),color=F('product_variant__color_name')).values('count', 'total_actual_price', 'brand', 'total_selling_price','variant_id', 'product_name', 'color'))
-    # for item in order_items:
-    #   product_variant = Product_Variant.objects.get(id=str(item['variant_id']))
-    #   product_variant.stock -= item['count']
-    #   product_variant.save()
-    # Order.objects.create(user=request.user, address=address_data, payment_method=payment_method, total_count=cart.total_count, total_discount_price=cart.total_discount_price, coupon_discount=cart.coupon_discount, total_actual_price=cart.total_actual_price, total_selling_price=cart.total_selling_price, final_price=cart.final_price,order_items=order_items)  
-    
-    
 
     order = Order.objects.create(user=request.user, address=address_data, payment_method=payment_method, total_count=cart.total_count, total_discount_price=cart.total_discount_price, coupon_discount=cart.coupon_discount, total_actual_price=cart.total_actual_price, total_selling_price=cart.total_selling_price, final_price=cart.final_price)    
 
@@ -598,9 +586,8 @@ class UserCheckout(LoginRequiredMixin,View):
       product_variant['product_description'] = product.description
 
       OrderItem.objects.create(order=order, count=item.count, total_actual_price=item.total_actual_price , total_selling_price=item.total_selling_price, product_variant=product_variant)
-      print(product_variant)
-
-    return redirect(request.META.get('HTTP_REFERER'))
+    cart.cart_items.all().delete()
+    messages.success(request, 'Order Placed Successfully')
     return redirect('user_home')
   
 
@@ -617,12 +604,14 @@ class UserReview(View):
     if review and images:
       for image in images:
         ReviewImage.objects.create(image=image, review=review)
+    messages.success(request, 'Thank you for your Review')
     return redirect(request.META.get('HTTP_REFERER'))
 
 class UserApplyCoupon(View):
   def get(self, request, coupon_code):
     if coupon := Coupon.objects.filter(code=coupon_code).first():
       request.session['coupon_discount'] = coupon.discount  
+      messages.success(request, 'Coupon Applied')
     return redirect(request.META.get('HTTP_REFERER'))
 
 

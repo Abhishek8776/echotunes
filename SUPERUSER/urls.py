@@ -4,6 +4,8 @@ from . import views
 urlpatterns = [
     path('', views.AdminSignIn.as_view(), name='admin_signin'),
     path('dashboard/', views.AdminDashboard.as_view(), name='admin_dashboard'),
+    path('users/', views.AdminUser.as_view(), name='admin_user'),
+    path('useraccess/<str:pk>/', views.AdminUpdateUserAccess.as_view(), name='admin_user_access'),
     path('banner/', views.AdminBanner.as_view(), name='admin_banner'),
     path('brand/', views.AdminBrand.as_view(), name='admin_brand'),
     path('category/', views.AdminCategory.as_view(), name='admin_category'),

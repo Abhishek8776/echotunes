@@ -4,8 +4,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
 <div class="p-3 border-start ps-4">
-  {% for order in orders %}
-    {% for item in order.order_items.all %}
+  {% comment %} {% for order in orders %} {% endcomment %}
+    {% for item in all_order_items %}
       <div class="row border w-100 rounded-3 mb-2">
         <div class="col-2 p-2">
           <a href="{% url 'order_details' pk=item.id %}">
@@ -34,7 +34,7 @@
               <a class="text-success text-decoration-none fw-medium">On the way</a>
             </div> 
             <div>
-              <button class="text-primary text-decoration-none fw-medium btn" data-bs-toggle="modal" data-bs-target="#rating_review{{forloop.counter}}"><i class="bi bi-star-fill"></i> Rate and Review</button>
+              <button class="btn-outline-primary text-decoration-none fw-medium btn" data-bs-toggle="modal" data-bs-target="#rating_review{{forloop.counter}}"><i class="bi bi-star-fill"></i> Rate and Review</button>
             </div>   
             <div><a class="btn btn-sm btn-primary fw-medium" href="{% url 'order_details' pk=item.id %}">View Details</a></div>    
           </div>
@@ -93,7 +93,7 @@
         </div>
       </div> 
     {% endfor %}
-  {% endfor %}
+  {% comment %} {% endfor %} {% endcomment %}
 </div>
 
 <script>

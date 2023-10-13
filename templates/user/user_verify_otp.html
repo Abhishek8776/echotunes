@@ -17,16 +17,6 @@
                 <img src="{% static 'images/logo/biglogo.svg' %}" class="img-fluid m-auto col-6 col-lg-4" alt="biglogo">
             </div>
             <h3 class="text-center pb-4">Verfy OTP</h3>
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
-            {% comment %} <div class="text-center">Please Enter the OTP</div> {% endcomment %}
-
-
-            {% comment %} <div class="text-center fw-bold">{{ email }}</div> {% endcomment %}
-
 
             <div class="row justify-content-center mt-4 mx-1 mx-sm-4">
                 <div class="col p-1">

@@ -17,11 +17,7 @@
                 <img src="{% static 'images/logo/biglogo.svg' %}" class="img-fluid m-auto col-6 col-lg-4" alt="biglogo">
             </div>
             <h3 class="text-center pb-2">Forgot Password</h3>
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
+
             <div class="mb-3">
                 <label for="emailid" class="form-label">Email address</label>
                 <input type="email" class="form-control borderg" id="emailid" name="email" required>

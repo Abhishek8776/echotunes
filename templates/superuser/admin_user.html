@@ -1,0 +1,36 @@
+{% extends 'superuser/admin_index.html' %}
+{% block admin_index %}
+{% load static %}
+  <table class="table table-bordered p" id="colors">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Last Login</th>
+        <th>Joined Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <th>{{ forloop.counter }}</th>
+          <td>{{ user.id }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.last_login }}</td>
+          <td>{{ user.date_joined }}</td>
+          {% if user.is_active == True %}
+          <td><a class="btn btn-danger" data-confirm-message="Do you want to Block this user" onclick="confirmDelete(this);" href="{% url "admin_user_access" pk=user.id %}" role="button">Block</a></td>
+          {% else %}
+          <td><a class="btn btn-success" data-confirm-message="Do you want to Unblock this user" onclick="confirmDelete(this);" href="{% url "admin_user_access" pk=user.id %}" role="button">Unblock</a></td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/deleteconfirmation.js' %}"></script>
+{% endblock %}

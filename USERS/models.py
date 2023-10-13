@@ -79,16 +79,16 @@ def calculate_cart_item_totals(sender, instance, **kwargs):
   instance.total_actual_price = instance.count * instance.product_variant.actual_price
 
 
-@receiver(pre_save, sender=CartItem)
-def out_of_stock_cart_items(sender, instance, **kwargs):
-  # if instance.product_variant.stock == 0:
-  #   instance.delete()
-  if instance.count>10:
-    instance.count = 10
-    print('you have reached limit')
-  elif instance.count > instance.product_variant.stock:
-    instance.count = instance.product_variant.stock
-    print(f'only {instance.product_variant.stock} products available')
+# @receiver(pre_save, sender=CartItem)
+# def out_of_stock_cart_items(sender, instance, **kwargs):
+# if instance.product_variant.stock == 0:
+#   instance.delete()
+# if instance.count>10:
+#   instance.count = 10
+#   print('you have reached limit')
+# elif instance.count > instance.product_variant.stock:
+#   instance.count = instance.product_variant.stock
+#   print(f'only {instance.product_variant.stock} products available')
 
 
 

@@ -100,6 +100,11 @@
                                 <a role="button" href="{% url 'admin_orders' %}" class="text-decoration-none text-dark">ORDERS</a>                        
                             </div>
                         </div>
+                        <div class="accordion-item">
+                            <div class="accordion-body">
+                                <a role="button" href="{% url 'admin_user' %}" class="text-decoration-none text-dark">Users</a>                        
+                            </div>
+                        </div>
 
                     </div>
                     <div class="my-3 my-sm-4">
@@ -135,6 +140,27 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {% for message in messages %}
+    <script>
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      {% if message.tags == 'error' %}
+        Toast.fire({ icon:'error', title:'{{ message }}'})
+      {% elif message.tags == 'success' %}
+        Toast.fire({icon:'success', title:'{{ message }}'})
+      {% endif %}
+    </script>
+  {% endfor %}
 
 </body>
 

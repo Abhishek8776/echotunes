@@ -1,8 +1,9 @@
 {% extends 'user/user_main_profile.html' %}
 {% block user_profile %}
+{% load static %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <div class="my-2 h5">Order Details</div>
-  <div class="row border w-100 rounded-3 mb-2">
+  <div class="row border w-100 rounded-3 m-0 mb-2">
     <div class="col-2 p-2">
       <a href="{% url 'user_product_details' item.product_variant.id %}">
         <img src="{{ item.product_variant.cover_image }}" class="img-fluid bg-secondary-subtle border rounded-3" alt="product"/>
@@ -31,8 +32,37 @@
       </div>
     </div>
   </div>
-    <div class="mb-2 h5">Delivery Address</div>
-  <div class="row border w-100 rounded-3 py-2">
+ <section class="step-wizard m-0">
+    <ul class="step-wizard-list w-100 border shadow">
+      <li class="step-wizard-item ">
+        <span class="progress-count ">1</span>
+        <span class="progress-label">Order Confirmed</span>
+        <span>date</span>
+      </li>
+      <li class="step-wizard-item ">
+        <span class="progress-count ">2</span>
+        <span class="progress-label">Packing Soon</span>
+        <span>date</span>
+      </li>
+      <li class="step-wizard-item">
+        <span class="progress-count ">3</span>
+        <span class="progress-label">Shipping Soon</span>
+        <span>date</span>
+      </li>
+      <li class="step-wizard-item current-item">
+        <span class="progress-count">4</span>
+        <span class="progress-label">Out for Delivery</span>
+        <span>date</span>
+      </li>
+      <!-- <li class="step-wizard-item">
+        <span class="progress-count"></span>
+        <span class="progress-label">Return</span>
+        <span>date</span>
+      </li> -->
+    </ul>
+  </section>
+  <div class="mb-2 h5">Delivery Address</div>
+  <div class="row border w-100 rounded-3 m-0 py-2">
     <div class="d-flex justify-content-between ">
       <div class="text-bg-primary badge">
         {% if item.order.address.address_type == 'Home' %} <i class="bi bi-house"></i>{% elif item.order.address.address_type == 'Office' %} <i class="bi bi-buildings"></i>{% endif %} {{ item.order.address.address_type }}
@@ -42,10 +72,4 @@
     <div>{{ item.order.address.address }}</div>
     <div>{{ item.order.address.place }} - {{ item.order.address.pincode }}</div>
   </div>
-<script>
-  function printinvoice(){
-    alert('ok')
-    print()
-  }
-</script>
 {% endblock user_profile %}

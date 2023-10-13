@@ -96,15 +96,9 @@
             <span class="card-text text-secondary fw-semibold">4.5 (12)</span> {% endcomment %}
           </div>
           <h4 class="card-title fw-bold mt-0 pt-0">{{ product.brand.name }} {{ product.name }}</h4>
-          {% comment %} <h5 class="card-subtitle mb-2 fw-bold">{{ product.name }}</h5> {% endcomment %}
           <span class="card-text fw-medium h5">₹{{ product.variants.first.actual_price }}</span>
           <span class="card-text fw-bold text-decoration-line-through text-secondary h6">₹{{ product.variants.first.selling_price }}</span>
-          <span class="card-text small text-success fw-bold">{{ product.variants.first.discount_percentage }}%
-            off</span>
-          {% comment %} <div class="d-flex mt-2">
-            <span class="p-2 bg-danger rounded-circle me-1"></span>
-            <span class="p-2 bg-success rounded-circle me-1"></span>
-          </div> {% endcomment %}
+          <span class="card-text small text-success fw-bold">{{ product.variants.first.discount_percentage }}% off</span>
           <h6 class="card-text text-secondary fw-bold mt-2">Free Delivery</h6>
         </div>
       </div>
