@@ -127,16 +127,13 @@ class Order(BaseModel):
   total_actual_price = models.IntegerField(default=0) 
   total_selling_price = models.IntegerField(default=0)
   final_price = models.IntegerField(default=0)
-  # order_items = models.JSONField(null=True)
-# address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='orders')
 
 
 class OrderItem(BaseModel):
-  id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+  # id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
   order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
-#   product_variant = models.ForeignKey(Product_Variant, on_delete=models.CASCADE, related_name='order_items')
   product_variant = models.JSONField()
-  status = models.CharField(max_length=30, default='On the Way')
+  status = models.CharField(max_length=30, default='Placed')
   count = models.PositiveIntegerField(default=1)
   total_actual_price = models.IntegerField(default=0)
   total_selling_price = models.IntegerField(default=0)

@@ -20,7 +20,7 @@
 
     <nav class="navbar bg-body-tertiary fixed-top border-bottom shadow">
         <div class="container-fluid px-2 px-lg-5">
-            <a class="navbar-brand" href="#"><img src="{% static 'images/logo/smalllogo.svg' %}" height="30" alt=""></a>
+            <a class="navbar-brand" href="{% url 'admin_dashboard' %}"><img src="{% static 'images/logo/smalllogo.svg' %}" height="30" alt=""></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
                 aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,7 +38,7 @@
                         
                         <div class="accordion-item">
                             <div class="accordion-body">
-                                <a role="button" href="#" class="text-decoration-none text-dark">DASHBOARD</a>                        
+                                <a role="button" href="{% url "admin_dashboard" %}" class="text-decoration-none text-dark">DASHBOARD</a>                        
                             </div>
                         </div>
 

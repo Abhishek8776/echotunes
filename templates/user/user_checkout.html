@@ -1,7 +1,7 @@
 {% extends 'user/user_index.html' %}
 {% block user_index %}
 {% load static %}
-  <form action="." method="post">
+  <form action="." method="post" id="placeorder">
     {% csrf_token %}
     <div class="row">
       <div class="col-8 p-2">
@@ -199,7 +199,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form action="{% url 'add_address' %}" method="post">
+          <form id="addressform" action="{% url 'add_address' %}" method="post">
             {% csrf_token %}
             <label for="address_type">Address Type</label>
             <select name="address_type" id="address_type" class="form-select mb-2">
@@ -247,7 +247,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Save">
+          <input type="button" onclick="saveaddress()" class="btn btn-primary" value="Save">
         </div>
       </div>
     </div>
@@ -255,6 +255,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{% static 'js/deleteconfirmation.js' %}"></script>
 <script>
+  function saveaddress(){
+    addressform = document.getElementById('addressform')
+    addressform.submit()
+  }
   function setcoupon(code,discount){
     const couponcodeinput = document.getElementById('couponcodeinput')
     couponcodeinput.value = code
@@ -363,6 +367,7 @@
   });
 </script>
 <script>
+  orderform = document.getElementById('placeorder')
   let options = {
     "key": "{{ payment_api_key }}",
     "name": "EchoTunes",
@@ -373,6 +378,7 @@
       alert(response.razorpay_payment_id);
       alert(response.razorpay_order_id);
       alert(response.razorpay_signature);
+      orderform.submit();
     },
     "theme": {
       "color": "#3399cc"

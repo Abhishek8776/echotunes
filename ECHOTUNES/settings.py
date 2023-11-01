@@ -64,7 +64,6 @@ EXTERNAL_APPS = [
 ]
 INSTALLED_APPS += EXTERNAL_APPS
 
-# SITE_ID = 1
 
 
 MIDDLEWARE = [
@@ -76,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'USERS.middleware.simple_middleware.SimpleMiddleware',
 
 ]
 
@@ -144,18 +144,6 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# SOCIALACCOUNT_PIPELINE = [
-#     'USERS.pipelines.update_user_data_from_google',
-
-# ]
-    # 'allauth.socialaccount.pipeline.social_auth.social_details',
-    # 'allauth.socialaccount.pipeline.social_auth.social_uid',
-    # 'allauth.socialaccount.pipeline.social_auth.auth_allowed',
-    # 'allauth.socialaccount.pipeline.social_auth.social_user',
-    # 'allauth.socialaccount.pipeline.social_auth.associate_user',
-    # 'allauth.socialaccount.pipeline.social_auth.load_extra_data',
-    # 'allauth.socialaccount.pipeline.social_auth.login',
-    # 'allauth.socialaccount.pipeline.social_auth.redirect_url',
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -172,7 +160,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-SOCIALACCOUNT_ADAPTER = 'USERS.adapters.CustomSocialAccountAdapter'
+# SOCIALACCOUNT_ADAPTER = 'USERS.adapters.CustomSocialAccountAdapter'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

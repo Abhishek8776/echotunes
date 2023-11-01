@@ -1,18 +1,18 @@
-from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+# from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
-class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
-  print('one')
-  def save_user(self, request, sociallogin, form=None):
-    print('two')
-    user = super().save_user(request, sociallogin, form=form)
-    if sociallogin.account.provider == 'google':
-        extra_data = sociallogin.account.extra_data
-        if 'name' in extra_data:
-            user.name = extra_data['name']
-        if 'email' in extra_data:
-            user.email = extra_data['email']
-        user.save()
-    return user
+# class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+#   print('one')
+#   def save_user(self, request, sociallogin, form=None):
+#     print('two')
+#     user = super().save_user(request, sociallogin, form=form)
+#     if sociallogin.account.provider == 'google':
+#         extra_data = sociallogin.account.extra_data
+#         if 'name' in extra_data:
+#             user.name = extra_data['name']
+#         if 'email' in extra_data:
+#             user.email = extra_data['email']
+#         user.save()
+#     return user
   
 # @receiver(user_signed_up)
 # def retrieve_social_data(request, user, **kwargs):

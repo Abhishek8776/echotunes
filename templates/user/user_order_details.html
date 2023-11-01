@@ -32,27 +32,28 @@
       </div>
     </div>
   </div>
- <section class="step-wizard m-0">
+{% if item.status != 'Cancelled' %}
+  <section class="step-wizard m-0">
     <ul class="step-wizard-list w-100 border shadow">
-      <li class="step-wizard-item ">
+      <li class="step-wizard-item">
         <span class="progress-count ">1</span>
         <span class="progress-label">Order Confirmed</span>
-        <span>date</span>
+        {% comment %} <span>date</span> {% endcomment %}
       </li>
-      <li class="step-wizard-item ">
+      <li class="step-wizard-item {% if item.status == 'Placed' %}current-item{% endif %}">
         <span class="progress-count ">2</span>
         <span class="progress-label">Packing Soon</span>
-        <span>date</span>
+        {% comment %} <span>date</span> {% endcomment %}
       </li>
-      <li class="step-wizard-item">
-        <span class="progress-count ">3</span>
+      <li class="step-wizard-item {% if item.status == 'Packed' %}current-item{% endif %}">
+        <span class="progress-count">3</span>
         <span class="progress-label">Shipping Soon</span>
-        <span>date</span>
+        {% comment %} <span>date</span> {% endcomment %}
       </li>
-      <li class="step-wizard-item current-item">
+      <li class="step-wizard-item {% if item.status == 'Shipped' %}current-item{% endif %}">
         <span class="progress-count">4</span>
         <span class="progress-label">Out for Delivery</span>
-        <span>date</span>
+        {% comment %} <span>date</span> {% endcomment %}
       </li>
       <!-- <li class="step-wizard-item">
         <span class="progress-count"></span>
@@ -61,6 +62,16 @@
       </li> -->
     </ul>
   </section>
+  {% else %}
+  <div class="p-2 border text-danger rounded-3">
+    Cancelled
+  </div>
+{% endif %}
+  {% if item.status != 'Cancelled' and item.status != 'Deliverd' %}
+    {% comment %} <div class="d-flex justify-content-end">
+    <a class="btn btn-danger" href="{% url "admin_update_order_status" 'Cancel' order_item.id %}">Cancel Order</a>
+  </div> {% endcomment %}
+  {% endif %}
   <div class="mb-2 h5">Delivery Address</div>
   <div class="row border w-100 rounded-3 m-0 py-2">
     <div class="d-flex justify-content-between ">

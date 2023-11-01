@@ -32,7 +32,9 @@
   <div class="d-flex pt-3 gap-4">
     {% for sub in subs %}
     <div class="card p-0 pt-3 border-0" style="width: 7rem;">
-      <img src="{{ sub.image.url }}" class="card-img-top" alt="category">
+      <a href="product_list/?page=1&sub_items={{ sub.id }}">
+        <img src="{{ sub.image.url }}" class="card-img-top" alt="category">
+      </a>
       <div class="card-body m-0 p-0 pt-1">
         <h6 class="card-title text-center m-0 p-0">{{ sub.name }}</h6>
       </div>
@@ -65,8 +67,9 @@
   <div class="row row-cols-6">
     {% for brand in brands %}
     <div class="col d-flex flex-column justify-content-center">
-      <img src="{{ brand.logo.url }}" style="height: 8rem;" alt="category">
-      <h6 class="card-title text-center m-0 p-0">{{ brand.name }}</h6>
+      <a href="product_list/?page=1&brand_items={{ brand.id }}">
+        <img src="{{ brand.logo.url }}" style="height: 8rem;" alt="category"></a>
+      <h6 class="card-title m-0 p-0">{{ brand.name }}</h6>
     </div>
     {% endfor %}
   </div>

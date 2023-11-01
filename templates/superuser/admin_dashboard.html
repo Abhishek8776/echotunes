@@ -1,6 +1,156 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
 {% extends 'superuser/admin_index.html' %}
 {% block admin_index %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous"/>
-<h1>dashboard</h1>
+<div class="text-center h1">Dashboard</div>
+<div class="row row-cols-4 pt-4">
+  <div class="col px-2">
+    <div class="border rounded-3 p-4" style="background: linear-gradient(to right, #629ccf, #2e2eab);">
+      <div class="fs-3 fw-bold text-light">Users</div>
+      <div class="position-relative">
+        <div class="h3 text-light position-absolute pt-3">{{ users|length }}</div>
+        <div class="display-1 text-end">
+          <i class="bi bi-people"
+            style="background: linear-gradient(to right, #ffffff2b, #ffffffb4);color: transparent;-webkit-background-clip: text; background-clip: text;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col px-2">
+    <div class="border rounded-3 p-4" style="background: linear-gradient(to right, #0deb7c, #249405);">
+      <div class="fs-3 fw-bold text-light">Orders</div>
+      <div class="position-relative">
+        <div class="h3 text-light position-absolute pt-3">{{ orders|length }}</div>
+        <div class="display-1 text-end">
+          <i class="bi bi-cart-check"
+            style="background: linear-gradient(to right, #ffffff2b, #ffffffb4);color: transparent;-webkit-background-clip: text; background-clip: text;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col px-2">
+    <div class="border rounded-3 p-4" style="background: linear-gradient(to right, #ff3284, #ff0101);">
+      <div class="fs-3 fw-bold text-light">Sold Products</div>
+      <div class="position-relative">
+        <div class="h3 text-light position-absolute pt-3">{{ orders.sold_products }}</div>
+        <div class="display-1 text-end">
+          <i class="bi bi-clock-history"
+            style="background: linear-gradient(to right, #ffffff2b, #ffffffb4);color: transparent;-webkit-background-clip: text; background-clip: text;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col px-2">
+    <div class="border rounded-3 p-4" style="background: linear-gradient(to right, hwb(257 46% 0%), #c402fa);">
+      <div class="fs-3 fw-bold text-light">Revenue</div>
+      <div class="position-relative">
+        <div class="h3 text-light position-absolute pt-3" style="color: #00c3ffb4;">{{ orders.total_revenue }}</div>
+        <div class="display-1 text-end">
+          <i class="bi bi-currency-rupee"
+            style="background: linear-gradient(to right, #ffffff2b, #ffffffb4);color: transparent;-webkit-background-clip: text; background-clip: text;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex flex-column gap-4 pt-4">
+  <div class="d-flex justify-content-between">
+    <div class="h2" id="display_date"></div>
+    {% comment %} <div> {% endcomment %}
+      {% comment %} <button type="button" class="btn {% if request.GET.date_type == 'Day' %}btn-primary{% else %}btn-outline-primary{% endif %}" onclick="changedate('Day')">Day</button>
+      <button type="button" class="btn {% if request.GET.date_type == 'Week' %}btn-primary{% else %}btn-outline-primary{% endif %}" onclick="changedate('Week')">Week</button>
+      <button type="button" class="btn {% if request.GET.date_type == 'Month' %}btn-primary{% else %}btn-outline-primary{% endif %}" onclick="changedate('Month')">Month</button>
+      <button type="button" class="btn {% if request.GET.date_type == 'Year' %}btn-primary{% else %}btn-outline-primary{% endif %}" onclick="changedate('Year')">Year</button>  {% endcomment %}
+      {% comment %} <input id="month" type="month" value="{% now 'Y-m' %}"> {% endcomment %}
+      {% comment %} <select name="year" id="year" onchange="changeyear()">
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+      </select>
+    </div> {% endcomment %}
+  {% comment %} </div> {% endcomment %}
+  <!-- <div class="border rounded-3 shadow p-4">
+    <div class="h3">Users</div>
+    <div class="row">
+      <div class="col">
+        <canvas id="userbarchart"></canvas>
+      </div>
+      <div class="col-4">
+        <canvas id="userdoughnutchart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="border rounded-3 shadow p-4">
+    <div class="h3">Orders</div>
+    <div class="row">
+      <div class="col">
+        <canvas id="orderbarchart"></canvas>
+      </div>
+      <div class="col-4">
+        <canvas id="orderdoughnutchart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="border rounded-3 shadow p-4">
+    <div class="h3">Products</div>
+    <div class="row">
+      <div class="col">
+        <canvas id="productbarchart"></canvas>
+      </div>
+      <div class="col-4">
+        <canvas id="productdoughnutchart"></canvas>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="border rounded-3 shadow p-4">
+    <div class="h3">Total Revenue</div>
+    <div class="row" class="p-5 m-5">
+      {% comment %} <div class="col-8"> {% endcomment %}
+        <canvas id="incomebarchart"></canvas>
+      {% comment %} </div> {% endcomment %}
+      {% comment %} <div class="col-4"> {% endcomment %}
+        {% comment %} <canvas id="incomedoughnutchart"></canvas> {% endcomment %}
+      {% comment %} </div> {% endcomment %}
+    </div> 
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js" integrity="sha512-JPcRR8yFa8mmCsfrw4TNte1ZvF1e3+1SdGMslZvmrzDYxS69J7J49vkFL8u6u8PlPJK+H3voElBtUCzaXj+6ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  function changeyear(){
+    alert('ok')
+  }
+  function createChart(id, chartType, labels, data, backgroundColor) {
+    new Chart(
+      document.getElementById(id),
+      {
+        type: chartType,
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Revenue',
+            data: data,
+            backgroundColor: backgroundColor,
+          }]
+        },
+        plugins: [ChartDataLabels],
+      }
+    );
+  }
+
+  // createChart('userbarchart', 'bar', ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], [100, 1500, 300, 200, 55, 44, 44], 'red');
+  // createChart('userdoughnutchart', 'doughnut', ["Purchased", "Not purchased", "Banned"], [100, 150, 5], ['red', 'green', 'yellow']);
+  // createChart('orderbarchart', 'bar', ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], [100, 1500, 300, 200, 55, 44, 44], 'red');
+  // createChart('orderdoughnutchart', 'doughnut', ["Packed", "Shipped", "Delivered", "Cancelled", "Returned"], [100, 150, 50, 20, 60], ['yellow', 'indigo', 'green', 'red', 'blue']);
+  // createChart('productbarchart', 'bar', ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], [100, 1500, 300, 200, 55, 44, 44], 'red');
+  // createChart('productdoughnutchart', 'doughnut', ["Purchased", "Not purchased"], [100, 150], ['red', 'green']);
+  createChart('incomebarchart', 'bar', ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],{{ monthly_data }}, 'red');
+  {% comment %} createChart('incomedoughnutchart', 'doughnut', ['Expense', 'Profit'], [100, 150], ['red', 'green']); {% endcomment %}
+</script>
 {% endblock admin_index %}

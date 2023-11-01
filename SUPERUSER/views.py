@@ -10,12 +10,11 @@ from PRODUCTS.models import *
 from django.urls import reverse
 from USERS.email import *
 from django.http import Http404
-from datetime import date
+from datetime import date,datetime
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
 
 
-
-
-# Create your views here.
 class AdminSignIn(View):
 
   def get(self, request):
@@ -40,67 +39,31 @@ class AdminSignIn(View):
     messages.success(request, 'Sign In Successfull')
     return redirect('admin_dashboard')
 
-  
-
-  
-
-# class AdminForgotPassword(View):
-
-#   def get(self, request):
-#     return render(request, 'user/user_forgot.html')
-  
-#   def post(self, request):
-#     email=request.POST.get('email')
-#     try:
-#       user = User.objects.get(email=email,is_superuser=True)
-#     except:
-#       messages.warning(request , 'Account not found')
-#       return redirect('user_signup')
-#     encrypt_id = urlsafe_base64_encode(str(user.pk).encode())
-#     reset_link = f"{request.scheme}://{request.get_host()}{reverse('reset', args=[encrypt_id])}"
-#     cache_key = f"reset_link_{encrypt_id}"
-#     cache.set(cache_key, {'reset_link':reset_link}, timeout=60) 
-#     reset_password_email(email, reset_link)
-#     messages.success(request, 'Password reset link sent to your email.')
-#     return redirect('user_signin')
-
-# class AdminResetPassword(View):
-  
-#   def get(self, request, encrypt_id):
-#     cache_key = f"reset_link_{encrypt_id}"
-#     cache_data = cache.get(cache_key)
-#     if not cache_data:
-#       raise Http404("Reset link has expired")
-#     reset_id = cache_data.get('reset_link')
-#     return render(request, 'user/user_reset.html',{'reset':reset_id})
-
-#   def post(self, request, encrypt_id):
-#     cache_key = f"reset_link_{encrypt_id}"
-#     id = str(urlsafe_base64_decode(encrypt_id), 'utf-8')
-#     user = User.objects.get(pk=id)
-#     new_password = request.POST.get('pass')
-#     user.set_password(new_password)
-#     user.save()
-#     cache.delete(cache_key)
-#     messages.success(request, 'Password reset successful. You can now log in with your new password.')
-#     return redirect('user_signin')
-# class home1(View):
-
-#   def get(self, request):
-#     return render(request, 'superuser/admin_signin.html')
-  
-# class Product(View):
-
-#   def get(self, request):
-#     return render(request, 'superuser/admin_product.html')
-
-
-
 class AdminDashboard(View):
 
   def get(self, request):
-    return render(request, 'superuser/admin_dashboard.html')
-  
+    users = User.objects.filter(is_superuser=False)
+    orders = OrderItem.objects.filter(created_at__year=2023)
+    orders.sold_products = orders.aggregate(Sum('count'))['count__sum']
+    orders.total_revenue = Order.objects.all().aggregate(Sum('final_price'))['final_price__sum']
+    year = datetime.now().year
+    monthly_data = []
+    for month in range(1, 13):
+      total_final_price = Order.objects.filter(created_at__year=year,created_at__month=month).aggregate(total_final_price=Sum('final_price'))['total_final_price'] or 0
+      monthly_data.append(total_final_price)
+    print(monthly_data)
+    # for month, total_price in monthly_data.items():
+    #     print(f"Month {month}: Total Final Price = {total_price}")
+    # current_url_params = request.GET.copy()
+    # print(current_url_params)
+    # if 'date_type' not in current_url_params:
+    #   current_url_params['date_type'] = 'Day'
+    # if'start_date' not in current_url_params:
+    #   current_url_params['start_date'] = date.today().strftime('%Y-%m-%d')
+    #   redirect_url = request.path + '?' + current_url_params.urlencode()
+    #   return redirect(redirect_url)
+    return render(request, 'superuser/admin_dashboard.html', {'users':users, 'orders':orders, 'monthly_data':monthly_data })
+
 
 
 class AdminBanner(View):
@@ -111,7 +74,6 @@ class AdminBanner(View):
   
   def post(self,request):
     img = request.FILES.get('bannerimg')
-    print(img)
     Banner.objects.create(image=img)
     messages.success(request, 'Banner Created')
     return redirect('admin_banner')
@@ -223,6 +185,8 @@ class AdminCoupons(View):
     minimum_amount = request.POST.get('minimum_amount')
     start_date = request.POST.get('start_date')
     end_date = request.POST.get('end_date')
+    start_date = date.fromisoformat(start_date)
+    end_date = date.fromisoformat(end_date)
     Coupon.objects.create(code=code, count=count, discount=discount, minimum_amount=minimum_amount,start_date=start_date, end_date=end_date)
     messages.success(request, 'Coupon Created')
     return redirect('admin_coupons')
@@ -232,7 +196,7 @@ class AdminCoupons(View):
 class AdminOrder(View):
 
   def get(self, request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-created_at')
     return render(request, 'superuser/admin_orders.html', {'orders':orders})
   
 
@@ -246,7 +210,11 @@ class AdminOrderDetails(View):
 class AdminUpdateOrderStatus(View):
   def get(self, request, action, pk):
     orderitem = OrderItem.objects.get(id=pk)
-    if action == 'Deliver':
+    if action == 'Packed':
+      orderitem.status = 'Packed'
+    elif action == 'Shipped':
+      orderitem.status = 'Shipped'
+    elif action == 'Deliverd':
       orderitem.status = 'Deliverd'
     elif action == 'Cancel':
       orderitem.status = 'Cancelled'

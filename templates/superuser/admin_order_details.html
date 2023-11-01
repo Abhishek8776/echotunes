@@ -9,7 +9,9 @@
         <th>Variant</th>
         <th>Count</th>
         <th>Status</th>
+        {% comment %} {% if order_item.status != Cancelled or order_item.status != Deliverd %} {% endcomment %}
         <th>Action</th>
+        {% comment %} {% endif %} {% endcomment %}
       </tr>
     </thead>
     <tbody>
@@ -17,18 +19,28 @@
         <tr>
           <th>{{ forloop.counter }}</th>
           <td>{{ order_item.id }}</td>
-          <td>{{ order_item.product_variant.product.brand.name }} {{ order_item.product_variant.product.name }}</td>
+          <td>{{ order_item.product_variant.product_name }} {{ order_item.product_variant.product.name }}</td>
           <td>{{ order_item.product_variant.color_name }}</td>
           <td>{{ order_item.count }}</td>
           <td>{{ order_item.status }}</td>
+          {% if order_item.status != Cancelled or order_item.status != Deliverd %}
           <td>
-            {% if order_item.status == 'On the way' or order_item.status == 'Cancel' %}
+            {% if order_item.status == 'Placed' %}
             <a href="{% url "admin_update_order_status" 'Cancel' order_item.id %}" class="btn btn-danger">Cancel</a>
-            <a href="{% url "admin_update_order_status" 'Deliver' order_item.id %}" class="btn btn-success">Deliver</a>
-            {% else %}
-            Done
+            <a href="{% url "admin_update_order_status" 'Packed' order_item.id %}" class="btn btn-success">Pack</a>
+            {% elif order_item.status == 'Packed' %}
+            <a href="{% url "admin_update_order_status" 'Cancel' order_item.id %}" class="btn btn-danger">Cancel</a>
+            <a href="{% url "admin_update_order_status" 'Shipped' order_item.id %}" class="btn btn-success">Ship</a>
+            {% elif order_item.status == 'Shipped' %}
+            <a href="{% url "admin_update_order_status" 'Cancel' order_item.id %}" class="btn btn-danger">Cancel</a>
+            <a href="{% url "admin_update_order_status" 'Deliverd' order_item.id %}" class="btn btn-success">Deliver</a>
+            {% elif order_item.status == 'Cancelled' %}
+            <div class="text-danger">Cancelled</div>
+            {% elif order_item.status == 'Deliverd' %}
+            <div class="text-success">Delivered</div>
             {% endif %}
           </td>
+          {% endif %}
         </tr>
       {% endfor %}
     </tbody>

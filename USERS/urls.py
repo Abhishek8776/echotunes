@@ -33,5 +33,5 @@ urlpatterns = [
     path('checkout/',views.UserCheckout.as_view(), name='checkout'),
     path('checkout/<str:pk>',views.UserCheckout.as_view(), name='checkout'),
     path('applycoupon/<str:coupon_code>/',views.UserApplyCoupon.as_view(), name='applycoupon'),
-    path('invoice/<str:pk>', views.UserInvoice.as_view(), name='invoice')
+    path('invoice/<str:pk>/', views.UserInvoice.as_view(), name='invoice'),
 ]

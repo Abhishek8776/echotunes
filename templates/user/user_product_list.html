@@ -144,7 +144,7 @@
         </div>
       </div>
 
-      <div class="h4 pt-3 pb-1">SORT</div>
+      <div class="h4 pt-3 pb-1" {% if request.GET.sort == 'price_low' %}{% endif %}>SORT</div>
       <ul class="list-group pb-3">
           <li onclick="sorting('price_low')" class="list-group-item {% if sorted == 'price_low' %}active{% endif %}" style="cursor: pointer;">PRICE LOW TO HIGH</li>
           <li onclick="sorting('price_high')" class="list-group-item {% if sorted == 'price_high' %}active{% endif %}" style="cursor: pointer;">PRICE HIGH TO LOW</li>

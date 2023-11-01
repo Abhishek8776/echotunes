@@ -22,9 +22,7 @@ import razorpay,json,time
 from ECHOTUNES.settings import RAZORPAY_API_KEY,RAZORPAY_API_SECRET
 from django.http import HttpResponse
 from django.template.loader import get_template,render_to_string
-# import pdfkit
 from xhtml2pdf import pdf
-# from weasyprint import HTML
 from xhtml2pdf import pisa
 import os
 from django.core.serializers import serialize
@@ -34,7 +32,8 @@ from django.db.models import F
 from django.forms.models import model_to_dict
 from django.db.models.functions import Cast
 from django.db.models import Value, CharField
-from io import BytesIO
+from django.urls import resolve
+
 
 
 
@@ -120,9 +119,13 @@ class UserSignIn(View):
       return redirect('user_signup')
     user = authenticate(request, email=email, password=password)
     if not user:
-      messages.error(request, 'Email password mismatch')
+      messages.error(request,'Email password mismatch')
       return redirect('user_signin')
-    login(request, user)
+    if user.is_active and not user.is_superuser:
+      login(request, user)
+    else:
+      messages.error(request, 'Access Denied')
+
     request.session['usr_id'] = str(user.id)
     messages.success(request, 'Sign in Successful')
     return redirect('user_home')
@@ -168,8 +171,7 @@ class UserResetPassword(View):
     user.set_password(new_password)
     user.save()
     cache.delete(cache_key)
-    messages.success(
-        request, 'Password reset successful. You can now log in with your new password.')
+    messages.success(request, 'Password reset successful. You can now log in with your new password.')
     return redirect('user_signin')
 
 
@@ -360,12 +362,7 @@ class UserAddToCart(View):
 
 
 class AddCartItemCount(View):
-  # if instance.count>10:
-  #   instance.count = 10
-  #   print('you have reached limit')
-  # elif instance.count > instance.product_variant.stock:
-  #   instance.count = instance.product_variant.stock
-  #   print(f'only {instance.product_variant.stock} products available')
+      
   def get(self, request, pk):
     if request.user.is_authenticated:
       cart_item = CartItem.objects.get(product_variant_id=pk)
@@ -521,7 +518,6 @@ class UserOrderHistory(View):
     all_order_items = []
     for order in orders:
       for item in order.order_items.all():
-        # print(order.order_items)
         product = Product.objects.get(id = item.product_variant['product_id'])
         item.review = request.user.reviews.filter(product=product).first()
         all_order_items.append(item)
@@ -574,9 +570,12 @@ class UserCheckout(LoginRequiredMixin,View):
 
     for item in cart.cart_items.all():
       id=str(item.product_variant.id)
+      product_variant = item.product_variant
+      product_variant.stock -= item.count
+      product_variant.save()
       product = item.product_variant.product
       # product = model_to_dict(item.product_variant.product)
-      # print(product)
+      # print(product) 
       product_variant = Product_Variant.objects.values().get(id=id)
       product_variant['id'] = str(id)
       product_variant['cover_image'] = '/media/'+ product_variant['cover_image'] 
