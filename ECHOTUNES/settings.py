@@ -110,10 +110,11 @@ WSGI_APPLICATION = 'ECHOTUNES.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'NAME': os.environ.get('DB_NAME'), #echotunesdb
+        'USER': os.environ.get('DB_USER'),#postgres
+        'PASSWORD': os.environ.get('DB_PASSWORD'),#abhishek
         'HOST': '127.0.0.1',  
+        # 'HOST': 'echotunesdb.cre7metbahcx.ap-south-1.rds.amazonaws.com',
         'PORT': '5432', 
     }
 }
@@ -217,6 +218,5 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
 
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
 RAZORPAY_API_KEY = os.environ.get('RAZORPAY_API_KEY')
 RAZORPAY_API_SECRET = os.environ.get('RAZORPAY_API_SECRET')

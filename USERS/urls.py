@@ -6,6 +6,8 @@ urlpatterns = [
     path('verification/<str:key>/' ,views.UserVerifyOTP.as_view(), name='user_verify_otp'),
     path('resendotp/<str:key>/',views.UserResndOTP.as_view(),name='user_resend'),
     path('signin/', views.UserSignIn.as_view(), name='user_signin'),
+    path('/accounts/social/signup/', views.CustomSignupView.as_view(), name='socialaccount_signup'),
+
     path('forgot/',views.UserForgotPassword.as_view(),name='user_forgot'),
     path('reset_password/<str:encrypt_id>/', views.UserResetPassword.as_view(), name='user_reset'),
     path('signout/', views.UserSignout.as_view(),name='user_signout'),

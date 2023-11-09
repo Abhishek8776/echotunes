@@ -33,6 +33,7 @@ from django.forms.models import model_to_dict
 from django.db.models.functions import Cast
 from django.db.models import Value, CharField
 from django.urls import resolve
+from allauth.socialaccount.views import SignupView
 
 
 
@@ -101,6 +102,28 @@ class UserResndOTP(View):
       cache.set(key, signup_data, timeout=existing_timeout)
       return redirect('user_verify_otp', key=key)
     return redirect('user_signup')
+  
+
+class CustomSignupView(SignupView):
+    http_method_names = ['get']
+
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        print('ok')
+        messages.error(request, "this email can't be used for google login")
+
+        return redirect('user_signin')
+        # social_login_email: str = self.sociallogin.user.email
+        # provider: str = self.sociallogin.account.provider
+
+        # messages.warning(self.request, _(f"An account already exists with this "
+        #                                  f"\"{social_login_email}\" e-mail address. "
+        #                                  f"Please sign in to that account first, "
+        #                                  f"then connect your \"{provider.capitalize()}\" account."))
+
+        # return redirect(reverse("account_login"), permanent=False)
 
 
 
