@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["13.127.74.170", "0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = [os.environ.get("HOSTING_IP"), "0.0.0.0", "127.0.0.1"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -112,12 +112,10 @@ WSGI_APPLICATION = "ECHOTUNES.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME"),  # echotunesdb
-        "USER": os.environ.get("DB_USER"),  # postgres
-        "PASSWORD": os.environ.get("DB_PASSWORD"),  # abhishek
-        "HOST": os.environ.get(
-            "DB_HOST"
-        ),  #'echotunesdb.cre7metbahcx.ap-south-1.rds.amazonaws.com',
+        "NAME": os.environ.get("DB_NAME"), 
+        "USER": os.environ.get("DB_USER"),  
+        "PASSWORD": os.environ.get("DB_PASSWORD"),  
+        "HOST": os.environ.get("DB_HOST"),  
         "PORT": os.environ.get("DB_PORT"),
     }
 }
@@ -140,8 +138,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
-# LOGIN_REDIRECT_URL = 'user_home'
-
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -200,13 +196,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-# STATICFILES_DIRS = [BASE_DIR / "static"]
-
+STATIC_HOST = "https://res.cloudinary.com/drwwxu9jw/raw/upload/v1"
+STATIC_URL = STATIC_HOST + "/static/"
 STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
-# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
