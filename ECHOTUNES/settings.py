@@ -64,9 +64,9 @@ EXTERNAL_APPS = [
 INSTALLED_APPS += EXTERNAL_APPS
 
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": "drwwxu9jw",
-    "API_KEY": "569752872994643",
-    "API_SECRET": "2tN2PJP74Xj3qRiLDxpdGelsgZ0",
+    "CLOUD_NAME": os.environ.get("CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUD_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUD_API_SECRET"),
 }
 
 MIDDLEWARE = [
