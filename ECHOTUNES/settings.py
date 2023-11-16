@@ -29,6 +29,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+TIME_ZONE = "UTC"
+
 ALLOWED_HOSTS = [os.environ.get("HOSTING_IP"), "0.0.0.0", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = [os.environ.get("HOSTING_URL"), "http://127.0.0.1"]
 INTERNAL_IPS = ["*"]
