@@ -30,14 +30,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [os.environ.get("HOSTING_IP"), "0.0.0.0", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = [os.environ.get("HOSTING_URL"), "http://127.0.0.1"]
+INTERNAL_IPS = ["*"]
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
 # Application definition
 
 INSTALLED_APPS = [
-    "cloudinary_storage",
+    # "cloudinary_storage",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,6 +51,9 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "debug_toolbar",
+    # "storages",
+    "s3_folder_storage",
+    "corsheaders",
 ]
 
 
@@ -78,8 +80,14 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "USERS.middleware.simple_middleware.SimpleMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",  # Add your frontend URL here
+]
+
 
 ROOT_URLCONF = "ECHOTUNES.urls"
 
@@ -112,10 +120,10 @@ WSGI_APPLICATION = "ECHOTUNES.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME"), 
-        "USER": os.environ.get("DB_USER"),  
-        "PASSWORD": os.environ.get("DB_PASSWORD"),  
-        "HOST": os.environ.get("DB_HOST"),  
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
         "PORT": os.environ.get("DB_PORT"),
     }
 }
@@ -150,6 +158,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
             "secret": os.environ.get("GOOGLE_SECRET"),
+            "redirect_uris": ["http://13.127.74.170/accounts/google/login/callback/"],
         },
         "SCOPE": [
             "profile",
@@ -196,12 +205,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_HOST = "https://res.cloudinary.com/drwwxu9jw/raw/upload/v1"
-STATIC_URL = STATIC_HOST + "/static/"
-STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
+# STATIC_URL = "static/"
+# STATIC_ROOT = [os.path.join(BASE_DIR, "static")]
 
-MEDIA_URL = "media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# MEDIA_URL = "media/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -219,3 +227,44 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
 RAZORPAY_API_KEY = os.environ.get("RAZORPAY_API_KEY")
 RAZORPAY_API_SECRET = os.environ.get("RAZORPAY_API_SECRET")
+
+
+# AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+# AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+# AWS_S3_REGION_NAME = "ap-south-1"
+# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+# AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+# AWS_S3_FILE_OVERWRITE = True
+# AWS_DEFAULT_ACL = None
+# # amazon static
+# AWS_LOCATION = "static"
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
+# STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# # amazon media
+# PUBLIC_MEDIA_LOCATION = "media"
+# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = "ap-south-1"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+AWS_S3_FILE_OVERWRITE = True
+AWS_DEFAULT_ACL = None
+
+STATIC_S3_PATH = "static"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = f"/{STATIC_S3_PATH}/"
+STATICFILES_STORAGE = "s3_folder_storage.s3.StaticStorage"
+STATIC_URL = f"http://s3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}/static/"
+ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
+
+DEFAULT_S3_PATH = "media"
+MEDIA_ROOT = f"/{DEFAULT_S3_PATH}/"
+DEFAULT_FILE_STORAGE = "s3_folder_storage.s3.DefaultStorage"
+MEDIA_URL = f"http://s3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}/media/"

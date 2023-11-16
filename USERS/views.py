@@ -581,6 +581,7 @@ class UserCheckout(LoginRequiredMixin,View):
     client = razorpay.Client(auth=(RAZORPAY_API_KEY,RAZORPAY_API_SECRET))
     payment_order = client.order.create(dict(amount = cart.final_price*100, currency = "INR", payment_capture = 1))
     payment_order_id = payment_order['id']
+    print(client,payment_order,payment_order_id)
     return render(request, 'user/user_checkout.html', {'addresses':addresses, 'cart':cart, 'cart_items':cart_items,'coupons':coupons, 'payment_api_key':RAZORPAY_API_KEY,'order_id':payment_order_id})  
    
   def post(self, request, pk=None):
