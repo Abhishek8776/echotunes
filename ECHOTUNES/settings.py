@@ -165,7 +165,8 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
             "secret": os.environ.get("GOOGLE_SECRET"),
-            "redirect_uris": ["http://13.127.74.170/accounts/google/login/callback/"],
+            # "redirect_uris": ["http://13.127.74.170/accounts/google/login/callback/"],
+            "redirect_uris": ["http://www.echotunes.shop/accounts/google/login/callback/"],
         },
         "SCOPE": [
             "profile",
