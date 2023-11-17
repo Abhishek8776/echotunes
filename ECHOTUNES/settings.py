@@ -38,13 +38,24 @@ ALLOWED_HOSTS = [
     "echotunes.shop",
     "www.echotunes.shop",
 ]
-CSRF_TRUSTED_ORIGINS = [os.environ.get("HOSTING_URL"), "http://127.0.0.1"]
-INTERNAL_IPS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1",
+    "https://echotunes.shop",
+    "https://www.echotunes.shop",
+]
+INTERNAL_IPS = [
+    "127.0.0.1",
+    os.environ.get("HOSTING_IP"),
+]
 
-# Application definition
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "https://echotunes.shop",
+    "https://www.echotunes.shop",
+]
+
 
 INSTALLED_APPS = [
-    # "cloudinary_storage",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -72,11 +83,6 @@ EXTERNAL_APPS = [
 ]
 INSTALLED_APPS += EXTERNAL_APPS
 
-CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get("CLOUD_NAME"),
-    "API_KEY": os.environ.get("CLOUD_API_KEY"),
-    "API_SECRET": os.environ.get("CLOUD_API_SECRET"),
-}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -89,10 +95,6 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "USERS.middleware.simple_middleware.SimpleMiddleware",
-]
-
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000",  # Add your frontend URL here
 ]
 
 
@@ -164,9 +166,7 @@ SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
             "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
-            "secret": os.environ.get("GOOGLE_SECRET"),
-            # "redirect_uris": ["http://13.127.74.170/accounts/google/login/callback/"],
-            "redirect_uris": ["http://www.echotunes.shop/accounts/google/login/callback/"],
+            "secret": os.environ.get("GOOGLE_SECRET")
         },
         "SCOPE": [
             "profile",
