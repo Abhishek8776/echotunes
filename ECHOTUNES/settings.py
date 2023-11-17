@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "debug_toolbar",
-    # "storages",
     "s3_folder_storage",
     "corsheaders",
 ]
