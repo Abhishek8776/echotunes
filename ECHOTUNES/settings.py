@@ -19,6 +19,8 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -167,7 +169,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
             "secret": os.environ.get("GOOGLE_SECRET"),
-            'redirect_uri': 'http://www.echotunes.shop/accounts/google/login/callback/',
+            "redirect_uri": "https://www.echotunes.shop/accounts/google/login/callback/",
         },
         "SCOPE": [
             "profile",
