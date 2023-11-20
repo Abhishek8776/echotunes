@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "echotunes.shop",
     "www.echotunes.shop",
+    "3.108.220.215",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1",
