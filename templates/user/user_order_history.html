@@ -9,7 +9,7 @@
       <div class="row border w-100 rounded-3 mb-2">
         <div class="col-2 p-2">
           <a href="{% url 'order_details' pk=item.id %}">
-            <img src="{{ item.product_variant.cover_image }}" class="img-fluid bg-secondary-subtle border rounded-3" alt="product"/>
+            <img src="{{ item.product_variant.cover_image.url }}" class="img-fluid bg-secondary-subtle border rounded-3" alt="product"/>
           </a>
         </div>
 
