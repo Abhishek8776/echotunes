@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
     os.environ.get("HOSTING_IP"),
     "0.0.0.0",
     "127.0.0.1",
+    "localhost",
     "echotunes.shop",
     "www.echotunes.shop",
     "3.108.220.215",
