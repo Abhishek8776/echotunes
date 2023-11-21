@@ -54,11 +54,11 @@ INTERNAL_IPS = [
     os.environ.get("HOSTING_IP"),
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000",
-    "https://echotunes.shop",
-    "https://www.echotunes.shop",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:8000",
+#     "https://echotunes.shop",
+#     "https://www.echotunes.shop",
+# ]
 
 
 INSTALLED_APPS = [
