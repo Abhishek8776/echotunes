@@ -44,11 +44,11 @@ ALLOWED_HOSTS = [
     "www.echotunes.shop",
     "3.108.220.215",
 ]
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1",
-    "https://echotunes.shop",
-    "https://www.echotunes.shop",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://127.0.0.1",
+#     "https://echotunes.shop",
+#     "https://www.echotunes.shop",
+# ]
 INTERNAL_IPS = [
     "127.0.0.1",
     os.environ.get("HOSTING_IP"),
