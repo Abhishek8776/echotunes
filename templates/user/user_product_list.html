@@ -100,7 +100,7 @@
       </div>      
       
 
-      <div class="accordion-item">
+      {% comment %} <div class="accordion-item">
         <h2 class="accordion-header">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">RATINGS</button>
         </h2>   
@@ -135,7 +135,7 @@
             </ul>
           </div>
         </div>
-      </div>
+      </div> {% endcomment %}
 
       <div class="accordion-item">
         <div class="ps-3 ms-1 pt-2">PRICE</div>
@@ -149,7 +149,7 @@
           <li onclick="sorting('price_low')" class="list-group-item {% if sorted == 'price_low' %}active{% endif %}" style="cursor: pointer;">PRICE LOW TO HIGH</li>
           <li onclick="sorting('price_high')" class="list-group-item {% if sorted == 'price_high' %}active{% endif %}" style="cursor: pointer;">PRICE HIGH TO LOW</li>
           <li onclick="sorting('new')" class="list-group-item {% if sorted == 'new' %}active{% endif %}" style="cursor: pointer;">NEWEST FIRST</li>
-          <li onclick="" class="list-group-item" style="cursor: pointer;">POPULARITY</li>
+          {% comment %} <li onclick="" class="list-group-item" style="cursor: pointer;">POPULARITY</li> {% endcomment %}
         </ul>
 
     </div>
@@ -172,7 +172,7 @@
           <div class="card-body p-0">
             <div class="pt-2 fw-medium">
               {% if variant.product.average_rating %}
-                <span class="text-warning"><i class="bi bi-star-fill"></i></span> {{ variant.product.average_rating|floatformat:1 }} (12)
+                <span class="text-warning"><i class="bi bi-star-fill"></i></span> {{ variant.product.average_rating|floatformat:1 }} ({{ variant.product.reviews.all|length }} review{% if variant.product.reviews.all|length > 1 %}s{% endif %})
               {% else %}
                 <span class="text-warning"><i class="bi bi-star-fill"></i></span> Be first to review
               {% endif %}
