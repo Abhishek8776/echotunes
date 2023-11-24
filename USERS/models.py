@@ -130,7 +130,6 @@ class Order(BaseModel):
 
 
 class OrderItem(BaseModel):
-  # id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
   order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
   product_variant = models.JSONField()
   status = models.CharField(max_length=30, default='Placed')
@@ -153,5 +152,3 @@ class ReviewImage(models.Model):
   id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
   image = models.ImageField(upload_to='review images/',null=True,blank=True)
   review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_images')
-
-
