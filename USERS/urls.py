@@ -23,6 +23,7 @@ urlpatterns = [
     path('delete_address/<str:pk>/', views.UserDeleteAddress.as_view(), name='delete_address'),
     path('order_history/', views.UserOrderHistory.as_view(), name="order_history"),
     path('order_details/<str:pk>/', views.UserOrderDetails.as_view(), name='order_details'),
+    path('order_success/', views.OrderSuccess.as_view(), name='order_success'),
     path('review/<str:pk>/', views.UserReview.as_view(), name='add_or_update_review'),
 
     path('cart/', views.UserCart.as_view(), name='user_cart'),

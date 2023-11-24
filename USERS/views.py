@@ -611,7 +611,13 @@ class UserCheckout(LoginRequiredMixin,View):
       OrderItem.objects.create(order=order, count=item.count, total_actual_price=item.total_actual_price , total_selling_price=item.total_selling_price, product_variant=product_variant)
     cart.cart_items.all().delete()
     messages.success(request, 'Order Placed Successfully')
-    return redirect('user_home')
+    return redirect('order_success')
+  
+
+class OrderSuccess(View):
+  def get(self, request):
+    return render(request, 'user/user_order_success.html') 
+
   
 
 
