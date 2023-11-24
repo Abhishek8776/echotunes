@@ -585,6 +585,7 @@ class UserCheckout(LoginRequiredMixin,View):
     return render(request, 'user/user_checkout.html', {'addresses':addresses, 'cart':cart, 'cart_items':cart_items,'coupons':coupons, 'payment_api_key':RAZORPAY_API_KEY,'order_id':payment_order_id})  
    
   def post(self, request, pk=None):
+    print("ok work")
     cart = request.user.cart
     address_id=request.POST.get('address')
     payment_method = request.POST.get('payment_method')

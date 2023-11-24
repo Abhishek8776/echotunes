@@ -184,8 +184,8 @@
           </div>
           <hr>
           <div class="d-grid py-2">
-            <input class="btn btn-primary d-none" id="rzp-button1" type="submit" value="CONFIRM ORDER">
-            <input class="btn btn-primary d-block" id="cod-button1" type="submit" value="CONFIRM ORDER">
+            <input class="btn btn-primary d-none" id="rzp-button1" onclick="saveorder()" type="submit" value="CONFIRM ORDER">
+            <input class="btn btn-primary d-block" id="cod-button1" onclick="saveorder()" type="submit" value="CONFIRM ORDER">
           </div>
         </div>
       </div>
@@ -255,6 +255,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{% static 'js/deleteconfirmation.js' %}"></script>
 <script>
+  function saveorder(){
+    orderform = document.getElementById('orderform')
+    orderform.submit()
+  } 
   function saveaddress(){
     addressform = document.getElementById('addressform')
     addressform.submit()
@@ -378,7 +382,7 @@
     //  alert(response.razorpay_payment_id);
     //  alert(response.razorpay_order_id);
     //  alert(response.razorpay_signature);
-    //  orderform.submit();
+    orderform.submit();
     },
     "theme": {
       "color": "#3399cc"
