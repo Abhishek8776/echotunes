@@ -51,7 +51,7 @@ class UserSignup(View):
     userobj = User.objects.filter(email=email).first()
     if userobj:
       messages.error(request, 'You are already registered, Please sign in')
-      return redirect('user_signin')
+      return redirect('user_signup')
     otp = str(random.randint(100000, 999999))
     account_verification_email(email, name, otp)
     key = hashlib.sha256(email.encode()).hexdigest()
