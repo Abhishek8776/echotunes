@@ -129,6 +129,13 @@ TEMPLATES = [
 WSGI_APPLICATION = "ECHOTUNES.wsgi.application"
 
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
