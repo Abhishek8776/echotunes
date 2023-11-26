@@ -64,8 +64,8 @@ class UserVerifyOTP(View):
 
   def get(self, request, key):
     signup_data = cache.get(key)
-    if not signup_data:
-        return redirect('user_signin')
+    # if not signup_data:
+    #     return redirect('user_signin')
     return render(request, 'user/user_verify_otp.html', {'key': key})
 
   def post(self, request, key):
