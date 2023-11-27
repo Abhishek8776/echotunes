@@ -386,8 +386,8 @@ class UserAddToCart(View):
   def get(self, request, pk):
     if request.user.is_authenticated:
       product_variant=Product_Variant.objects.get(id=pk)
-      cart = Cart.objects.get(user=request.user)
-      CartItem.objects.get_or_create(cart=cart,product_variant=product_variant)
+      # cart = Cart.objects.get(user=request.user)
+      CartItem.objects.get_or_create(cart=request.user.cart,product_variant=product_variant)
     else:
       cart = request.session.get('cart', {})
       cart[pk] = {'count': 1, 'product_variant_id': pk}
@@ -401,7 +401,7 @@ class AddCartItemCount(View):
       
   def get(self, request, pk):
     if request.user.is_authenticated:
-      cart_item = CartItem.objects.get(product_variant_id=pk)
+      cart_item = CartItem.objects.get(cart=request.user.cart, product_variant_id=pk)
       if cart_item.count >= 10:
         messages.error(request, 'Your have reached Maximum Limit')
       elif cart_item.count > (stock := cart_item.product_variant.stock):
@@ -423,7 +423,7 @@ class SubtractCartItemCount(View):
 
   def get(self, request, pk):
     if request.user.is_authenticated:
-      cart_item = CartItem.objects.get(product_variant_id=pk)
+      cart_item = CartItem.objects.get(cart=request.user.cart, product_variant_id=pk)
       cart_item.count -= 1
       cart_item.save()
     else:
@@ -440,7 +440,7 @@ class UserRemoveFromCart(View):
 
   def get(self, request, pk):
     if request.user.is_authenticated:
-      cart_item = CartItem.objects.get(product_variant_id=pk)
+      cart_item = CartItem.objects.get(cart=request.user.cart, product_variant_id=pk)
       cart_item.delete()
     else:
       cart = request.session.get('cart', {})
