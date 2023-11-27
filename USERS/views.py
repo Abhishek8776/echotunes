@@ -598,11 +598,15 @@ class UserCheckout(LoginRequiredMixin,View):
     return render(request, 'user/user_checkout.html', {'addresses':addresses, 'cart':cart, 'cart_items':cart_items,'coupons':coupons, 'payment_api_key':RAZORPAY_API_KEY,'order_id':payment_order_id})  
    
   def post(self, request, pk=None):
-    print("ok work")
     cart = request.user.cart
-    address_id=request.POST.get('address')
+    try:
+      address_id=request.POST.get('address')
+      address_data = UserAddress.objects.values('name', 'gender', 'mobile', 'email', 'address_type','place', 'address', 'landmark', 'pincode', 'post','district', 'state').get(id=address_id)
+    except:
+      messages.error(request,'Please select an Address to proceed with checkout!')
+      return redirect('checkout')
     payment_method = request.POST.get('payment_method')
-    address_data = UserAddress.objects.values('name', 'gender', 'mobile', 'email', 'address_type','place', 'address', 'landmark', 'pincode', 'post','district', 'state').get(id=address_id)
+
 
     order = Order.objects.create(user=request.user, address=address_data, payment_method=payment_method, total_count=cart.total_count, total_discount_price=cart.total_discount_price, coupon_discount=cart.coupon_discount, total_actual_price=cart.total_actual_price, total_selling_price=cart.total_selling_price, final_price=cart.final_price)    
 
