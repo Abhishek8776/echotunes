@@ -569,6 +569,10 @@ class UserOrderDetails(View):
 
 class UserCheckout(LoginRequiredMixin,View):
   def get(self, request, pk=None):
+    user_addresses = request.user.user_addresses.all()
+    if not user_addresses:  
+      messages.info(request,'Please add atleast one address to proceed with checkout')
+      return redirect('user_cart')
     cart = Cart.objects.get(user=request.user)
     cart.coupon_discount = request.session.get('coupon_discount', 0)
     if cart.total_selling_price > cart.coupon_discount:
@@ -599,12 +603,8 @@ class UserCheckout(LoginRequiredMixin,View):
    
   def post(self, request, pk=None):
     cart = request.user.cart
-    try:
-      address_id=request.POST.get('address')
-      address_data = UserAddress.objects.values('name', 'gender', 'mobile', 'email', 'address_type','place', 'address', 'landmark', 'pincode', 'post','district', 'state').get(id=address_id)
-    except:
-      messages.error(request,'Please select an Address to proceed with checkout!')
-      return redirect('checkout')
+    address_id=request.POST.get('address')
+    address_data = UserAddress.objects.values('name', 'gender', 'mobile', 'email', 'address_type','place', 'address', 'landmark', 'pincode', 'post','district', 'state').get(id=address_id)
     payment_method = request.POST.get('payment_method')
 
 
