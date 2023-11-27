@@ -54,23 +54,32 @@ class UserSignup(View):
       return redirect('user_signup')
     otp = str(random.randint(100000, 999999))
     account_verification_email(email, name, otp)
-    key = hashlib.sha256(email.encode()).hexdigest()
-    cache.set(key, {'email': email, 'name': name,'password': password, 'otp': otp}, timeout=600)
-    return redirect('user_verify_otp', key=key)
+    # key = hashlib.sha256(email.encode()).hexdigest()
+    # cache.set(key, {'email': email, 'name': name,'password': password, 'otp': otp}, timeout=600)
+    request.session['signup_data'] = {'email': email, 'name': name,'password': password, 'otp': otp}
+    # return redirect('user_verify_otp', key=key)
+    return redirect('user_verify_otp')
+
 
 
 
 class UserVerifyOTP(View):
 
-  def get(self, request, key):
-    signup_data = cache.get(key)
+  def get(self, request):
+  # def get(self, request, key):
+    # signup_data = cache.get(key)
     # if not signup_data:
     #     return redirect('user_signin')
-    return render(request, 'user/user_verify_otp.html', {'key': key})
+    if request.session.get('signup_data'):
+      # return render(request, 'user/user_verify_otp.html', {'key': key})
+      return render(request, 'user/user_verify_otp.html')
+    return redirect('user_signup')
 
-  def post(self, request, key):
+  # def post(self, request, key):
+  def post(self, request):
     reciveotp = request.POST.get('otp1') + request.POST.get('otp2') + request.POST.get('otp3') + request.POST.get('otp4') + request.POST.get('otp5') + request.POST.get('otp6')
-    signup_data = cache.get(key)
+    # signup_data = cache.get(key)
+    signup_data =  request.session.get('signup_data',{})
     if not signup_data:
         messages.error(request, 'OTP expired or invalid')
         return redirect('user_signin')
@@ -81,26 +90,32 @@ class UserVerifyOTP(View):
     print(reciveotp, otp)
     if reciveotp != otp:
         messages.error(request, 'OTP mismatch')
-        return redirect('user_verify_otp', key=key)
+        # return redirect('user_verify_otp', key=key)
+        return redirect('user_verify_otp')
     user = User.objects.create_user(name=name, email=email, password=password)
     user.save()
-    cache.delete(key)
+    messages.success(request, 'Account created successfully.')
+    # cache.delete(key)
+    del request.session['signup_data']
     return redirect('user_signin')
 
 
 
 class UserResndOTP(View):
-  def get(self, request, key):
-    signup_data = cache.get(key)
+  # def get(self, request, key):
+  def get(self, request):
+    # signup_data = cache.get(key)
+    signup_data = request.session.get('signup_data',{})
     if signup_data:
       email = signup_data.get('email')
       name = signup_data.get('name')
       otp = str(random.randint(100000, 999999))
       account_verification_email(email, name, otp)
       signup_data['otp'] = otp
-      existing_timeout = signup_data.get('timeout', None)
-      cache.set(key, signup_data, timeout=existing_timeout)
-      return redirect('user_verify_otp', key=key)
+      # existing_timeout = signup_data.get('timeout', None)
+      # cache.set(key, signup_data, timeout=existing_timeout)
+      # return redirect('user_verify_otp', key=key)
+      return redirect('user_verify_otp')
     return redirect('user_signup')
   
 
@@ -111,9 +126,7 @@ class CustomSignupView(SignupView):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        print('ok')
-        messages.error(request, "this email can't be used for google login")
-
+        messages.error(request, "An account already exists with this e-mail address")
         return redirect('user_signin')
         # social_login_email: str = self.sociallogin.user.email
         # provider: str = self.sociallogin.account.provider
@@ -139,7 +152,7 @@ class UserSignIn(View):
     userobj = User.objects.filter(email=email).first()
     if not userobj:
       messages.error(request, 'You are not registered, Please sign up')
-      return redirect('user_signup')
+      return redirect('user_signin')
     user = authenticate(request, email=email, password=password)
     if not user:
       messages.error(request,'Email password mismatch')
@@ -149,7 +162,7 @@ class UserSignIn(View):
     else:
       messages.error(request, 'Access Denied')
 
-    request.session['usr_id'] = str(user.id)
+    # request.session['usr_id'] = str(user.id)
     messages.success(request, 'Sign in Successful')
     return redirect('user_home')
 

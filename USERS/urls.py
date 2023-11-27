@@ -3,8 +3,10 @@ from . import views
 
 urlpatterns = [
     path('signup/',views.UserSignup.as_view(),name='user_signup'),
-    path('verification/<str:key>/' ,views.UserVerifyOTP.as_view(), name='user_verify_otp'),
-    path('resendotp/<str:key>/',views.UserResndOTP.as_view(),name='user_resend'),
+    # path('verification/<str:key>/' ,views.UserVerifyOTP.as_view(), name='user_verify_otp'),
+    path('verification/' ,views.UserVerifyOTP.as_view(), name='user_verify_otp'),
+    # path('resendotp/<str:key>/',views.UserResndOTP.as_view(),name='user_resend'),
+    path('resendotp/',views.UserResndOTP.as_view(),name='user_resend'),
     path('signin/', views.UserSignIn.as_view(), name='user_signin'),
     path('/accounts/social/signup/', views.CustomSignupView.as_view(), name='socialaccount_signup'),
 

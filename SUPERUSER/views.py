@@ -35,7 +35,7 @@ class AdminSignIn(View):
       return redirect('admin_signin')
     
     login(request, superuser)
-    request.session['usr_id'] = str(superuser.id)
+    # request.session['usr_id'] = str(superuser.id)
     messages.success(request, 'Sign In Successfull')
     return redirect('admin_dashboard')
 
