@@ -1,6 +1,6 @@
 {% extends 'superuser/admin_index.html' %}
 {% block admin_index %}
-  <form action="" method="post" enctype="multipart/form-data">
+  {% comment %} <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
   
     <div class="d-flex justify-content-between pb-4">
@@ -25,13 +25,14 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> {% endcomment %}
 
     <table class="table table-bordered" id="colors">
       <thead>
         <tr>
           <th>#</th>
           <th>Banner</th>
+          <th>Product</th>
           <th>Updated At</th>
           <th>Created At</th>
         </tr>
@@ -41,17 +42,17 @@
           <tr>
             <th>{{ forloop.counter }}</th>
             <td>
-              
               <figure class="figure">
                 <img src="{{ banner.image.url }}" class="figure-img rounded" width="300" alt="banner">
                 <figcaption class="figure-caption"><b>ID  :  {{ banner.id }}</b></figcaption>
               </figure>
             </td>
+            <td><a href="{% url 'admin_product_variants' pk=banner.product.id %}">{{ product.name }}</a></td>
             <td>{{ banner.updated_at }}</td>
             <td>{{ banner.created_at }}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
-  </form>
+  {% comment %} </form> {% endcomment %}
 {% endblock %}

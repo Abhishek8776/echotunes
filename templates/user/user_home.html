@@ -13,7 +13,8 @@
   <div class="carousel-inner">
     {% for banner in banners %}
     <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}" data-bs-interval="4000">
-      <img src="{{ banner.image.url }}" class="d-block w-100" alt="banner">
+      <a href="{% url 'user_product_details' pk=banner.product.variants.first.id %}">
+        <img src="{{ banner.image.url }}" class="d-block w-100" alt="banner"></a>
     </div>
     {% endfor %}
   </div>

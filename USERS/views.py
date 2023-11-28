@@ -490,15 +490,12 @@ class UserProfileView(LoginRequiredMixin, View):
     return render(request, 'user/user_profile.html')
   
 
-  
 class UserManageAddress(View):
 
   def get(self, request):
     addresses = request.user.user_addresses.all()
     return render(request, 'user/user_manage_address.html', {'addresses':addresses})
   
-
-
 class UserAddAddress(View):
 
   def post(self, request):

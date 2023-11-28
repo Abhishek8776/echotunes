@@ -2,9 +2,33 @@
 {% block admin_index %}
 <div class="d-flex justify-content-between pb-4">
   <div><h3>{{ product.name }}</h3></div>
-  <div class=""><button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button">Add Variant</button></div>
+  <div class="">
+    <button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal1" type="button">Add Banner</button>
+    <button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#exampleModal2" type="button">Add Variant</button>
+  </div>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="exampleModal1" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form action="{% url 'admin_banner' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Banner</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="file" name="bannerimg" id="">
+            <input type="hidden" name="product" value="{{ product.id }}">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <input class="btn btn-primary" type="submit" value="Save">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+<div class="modal fade" id="exampleModal2" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <form action="." method="post" enctype="multipart/form-data">
@@ -29,8 +53,6 @@
           <input class="form-control" type="file" name="cover" id="" required>
           <label for="">Extra Images</label>
           <input class="form-control" type="file" name="images" id="" multiple required>
-
-
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

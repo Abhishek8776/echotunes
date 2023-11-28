@@ -23,8 +23,8 @@ class Command(BaseCommand):
   help = 'Schedule update coupon status task'
 
   def handle(self, *args, **kwargs):
-    # schedule.every().day.at('00:00').do(update_coupon_status_task)
-    schedule.every(2).seconds.do(update_coupon_status_task)
+    schedule.every().day.at('00:00').do(update_coupon_status_task)
+    # schedule.every(2).seconds.do(update_coupon_status_task)
     while True:
       schedule.run_pending()
       time.sleep(1)
